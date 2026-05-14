@@ -1,57 +1,138 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- 首页 -->
   <url>
     <loc>https://qyserver.cc/</loc>
-    <lastmod>2026-04-16T14:19:29Z</lastmod>
+    <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
+    <priority>1.0</priority>
   </url>
+
+  <!-- 关于页面 -->
   <url>
-    <loc>https://qyserver.cc/cdn-cgi/l/email-protection</loc>
-    <lastmod>2026-04-16T14:19:29Z</lastmod>
+    <loc>https://qyserver.cc/about/</loc>
+    <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
+    <priority>0.7</priority>
   </url>
-  <url>
-    <loc>https://qyserver.cc/command/</loc>
-    <lastmod>2026-04-16T14:19:29Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
+
+  <!-- 下载页面 -->
   <url>
     <loc>https://qyserver.cc/download/</loc>
-    <lastmod>2026-04-16T14:19:29Z</lastmod>
+    <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
+    <priority>0.8</priority>
   </url>
+
+  <!-- FAQ 问题列表 -->
   <url>
     <loc>https://qyserver.cc/faq/</loc>
-    <lastmod>2026-04-16T14:19:29Z</lastmod>
+    <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- FAQ 问题详情页 -->
+  <url>
+    <loc>https://qyserver.cc/faq/problem.html</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
+
+  <!-- AI 助手独立页面 -->
+  <url>
+    <loc>https://qyserver.cc/faq/ai/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- 图廊首页 -->
   <url>
     <loc>https://qyserver.cc/gallery/</loc>
-    <lastmod>2026-04-16T14:19:29Z</lastmod>
+    <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
+    <priority>0.7</priority>
   </url>
+
+  <!-- 图廊详情页 -->
   <url>
-    <loc>https://qyserver.cc/map/</loc>
-    <lastmod>2026-04-16T14:19:29Z</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://qyserver.cc/gallery/detail.html</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
+
+  <!-- 服务器指令 -->
+  <url>
+    <loc>https://qyserver.cc/command/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- 服务器规则 -->
   <url>
     <loc>https://qyserver.cc/rules/</loc>
-    <lastmod>2026-04-16T14:19:29Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
+
+  <!-- 在线查询 -->
   <url>
     <loc>https://qyserver.cc/search/</loc>
-    <lastmod>2026-04-16T14:19:29Z</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- 网页地图（跳转页面） -->
+  <url>
+    <loc>https://qyserver.cc/map/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+  </url>
+
+  <!-- 更新日志 -->
+  <url>
+    <loc>https://qyserver.cc/updatelog/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- 调试面板 -->
+  <url>
+    <loc>https://qyserver.cc/debug/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- 日志查询 -->
+  <url>
+    <loc>https://qyserver.cc/logs/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+
+  <!-- 视频播放页 -->
+  <url>
+    <loc>https://qyserver.cc/video/test/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+
+  <!-- Uptime Robot 跳转 -->
+  <url>
+    <loc>http://uptime.s.3q.hair/status/qy</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
   </url>
 </urlset>

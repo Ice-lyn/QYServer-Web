@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>QYServer | 3DWorld - FPS</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            overflow: hidden;
+            background: #000;
+            font-family: "微软雅黑", "Microsoft YaHei", sans-serif;
+            touch-action: none;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        #top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            z-index: 30;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        #top-nav .logo {
+            color: #f8a5c2;
+            font-size: 20px;
+            font-weight: 700;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #top-nav .nav-links {
+            display: flex;
+            gap: 12px;
+        }
+
+        #top-nav .nav-links a {
+            color: #ccc;
+            text-decoration: none;
+            font-size: 13px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        #top-nav .nav-links a:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width:700px) {
+            #top-nav .nav-links a span {
+                display: none;
+            }
+
+            #top-nav .nav-links {
+                gap: 6px;
+            }
+        }
+
+        #hud {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 10;
+            top: 56px;
+        }
+
+        #crosshair {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 28px;
+            height: 28px;
+        }
+
+        #crosshair::before,
+        #crosshair::after {
+            content: '';
+            position: absolute;
+            background: rgba(255, 255, 255, 0.85);
+        }
+
+        #crosshair::before {
+            width: 2px;
+            height: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        #crosshair::after {
+            height: 2px;
+            width: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        #ammo-display {
+            position: absolute;
+            bottom: 40px;
+            right: 20px;
+            color: #fff;
+            font-size: 22px;
+            font-weight: 900;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+            font-family: 'Courier New', monospace;
+        }
+
+        #ammo-display .current {
+            font-size: 40px;
+        }
+
+        #ammo-display .sep {
+            margin: 0 3px;
+            opacity: 0.5;
+        }
+
+        #ammo-display .reserve {
+            font-size: 16px;
+            opacity: 0.7;
+        }
+
+        #health-bar {
+            position: absolute;
+            bottom: 50px;
+            left: 20px;
+            width: 200px;
+            height: 16px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        #health-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #e74c3c, #ff6b6b);
+            transition: width 0.3s;
+            width: 100%;
+        }
+
+        #health-text {
+            position: absolute;
+            bottom: 72px;
+            left: 24px;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        #score-display {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 700;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+        }
+
+        #flight-hint {
+            position: absolute;
+            top: 50px;
+            right: 20px;
+            color: #ffd700;
+            font-size: 13px;
+            font-weight: 700;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+            display: none;
+        }
+
+        #hitmarker {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: opacity 0.1s;
+            font-size: 22px;
+            color: #ff4444;
+            pointer-events: none;
+        }
+
+        #damage-vignette {
+            position: absolute;
+            inset: 0;
+            border: 20px solid transparent;
+            transition: border-color 0.15s;
+            pointer-events: none;
+        }
+
+        #instructions {
+            position: absolute;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 12px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 8px 16px;
+            border-radius: 16px;
+            transition: opacity 0.5s;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        #death-screen {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            pointer-events: all;
+        }
+
+        #death-screen.active {
+            display: flex;
+        }
+
+        #death-screen h1 {
+            color: #e74c3c;
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+
+        #death-screen p {
+            color: #ccc;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        #death-screen button {
+            padding: 12px 30px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            background: #f8a5c2;
+            color: #fff;
+            cursor: pointer;
+            font-weight: 700;
+            pointer-events: all;
+        }
+
+        #touch-controls {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 20;
+            pointer-events: all;
+        }
+
+        #joystick-base {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.12);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            position: relative;
+        }
+
+        #joystick-thumb {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.35);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        #jump-btn,
+        #shoot-btn,
+        #reload-btn {
+            display: none;
+            position: fixed;
+            z-index: 20;
+            pointer-events: all;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #jump-btn {
+            bottom: 140px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+        }
+
+        #shoot-btn {
+            bottom: 60px;
+            right: 30px;
+            width: 56px;
+            height: 56px;
+            font-size: 22px;
+            background: rgba(255, 60, 40, 0.25);
+            border-color: rgba(255, 80, 60, 0.5);
+        }
+
+        #reload-btn {
+            bottom: 200px;
+            right: 30px;
+            width: 40px;
+            height: 40px;
+            font-size: 16px;
+        }
+
+        @media (max-width:900px) {
+
+            #touch-controls,
+            #jump-btn,
+            #shoot-btn,
+            #reload-btn {
+                display: flex !important;
+            }
+
+            #instructions {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav id="top-nav">
+        <a href="/" class="logo"><i class="fas fa-cube"></i> QYServer</a>
+        <div class="nav-links">
+            <a href="/"><i class="fas fa-arrow-left"></i> <span>返回</span></a>
+        </div>
+    </nav>
+
+    <div id="hud">
+        <div id="crosshair"></div>
+        <div id="hitmarker">✕</div>
+        <div id="instructions">🖱️ 鼠标/触屏瞄准 | 🔫 左键射击 | R 换弹 | WASD/摇杆移动 | 空格跳跃</div>
+        <div id="score-display">🎯 <span id="kill-count">0</span> / 20</div>
+        <div id="flight-hint">✈️ 双击跳跃飞行 (已解锁)</div>
+        <div id="health-text">❤️ <span id="health-num">1000</span></div>
+        <div id="health-bar">
+            <div id="health-fill"></div>
+        </div>
+        <div id="ammo-display">
+            <span class="current" id="current-ammo">30</span><span class="sep">/</span><span class="reserve"
+                id="reserve-ammo">90</span>
+        </div>
+        <div id="damage-vignette"></div>
+        <div id="death-screen">
+            <h1>💀 你阵亡了</h1>
+            <p>击杀: <span id="death-kills">0</span></p>
+            <button id="respawn-btn">🔄 重新开始</button>
+        </div>
+    </div>
+
+    <div id="touch-controls">
+        <div id="joystick-base">
+            <div id="joystick-thumb"></div>
+        </div>
+    </div>
+    <button id="jump-btn">⬆</button>
+    <button id="shoot-btn">🔫</button>
+    <button id="reload-btn">🔄</button>
+
+    <script type="importmap">
+{
+    "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    }
+}
+</script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+        // ============================================================
+        // 配置
+        // ============================================================
+        const CFG = {
+            player: { maxHealth: 1000, moveSpeed: 7, jumpVelocity: 5.5, gravity: 18, mouseSensitivity: 0.002, arrowSensitivity: 0.04 },
+            weapon: { maxAmmo: 30, maxReserve: 90, fireRate: 140, reloadTime: 1500, bulletSpeed: 0.8, bulletMaxDist: 100, bulletSize: 0.08, damage: 1 },
+            enemy: { maxCount: 8, spawnInterval: 5000, health: 2, speed: 0.04, attackRange: 2.5, attackCooldown: 1.3, attackDamage: 8, bodyW: 1.2, bodyH: 1.8, bodyD: 1.2 },
+            loot: { ammoChance: 0.50, ammoAmount: 50, healChance: 0.35, healAmount: 200 },
+            flight: { requiredKills: 20, maxSpeed: 12, doubleTapWindow: 400 },
+            world: { chunkSize: 8, viewRadius: 6, skyColor: 0x8CC0DE, fogNear: 30, fogFar: 120, riverLevel: 4, treeDensity: 0.04 },
+            sun: { pos: [80, 120, 60], color: 0xffeedd, intensity: 2 },
+            memory: { maxCachedChunks: 200, cleanupInterval: 5000, enemyFarDespawn: 100 }
+        };
+
+        // ============================================================
+        // 随机种子 (每次刷新不同)
+        // ============================================================
+        const WORLD_SEED = Math.floor(Math.random() * 1000000);
+
+        // ============================================================
+        // 场景
+        // ============================================================
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(CFG.world.skyColor);
+        scene.fog = new THREE.Fog(CFG.world.skyColor, CFG.world.fogNear, CFG.world.fogFar);
+
+        const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 200);
+        camera.position.set(0, 20, 0);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(innerWidth, innerHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+        document.body.appendChild(renderer.domElement);
+
+        scene.add(new THREE.AmbientLight(0x8899bb, 0.7));
+        const sunLight = new THREE.DirectionalLight(CFG.sun.color, CFG.sun.intensity);
+        sunLight.position.set(...CFG.sun.pos);
+        sunLight.castShadow = true;
+        sunLight.shadow.mapSize.set(2048, 2048);
+        sunLight.shadow.camera.near = 0.5; sunLight.shadow.camera.far = 300;
+        sunLight.shadow.camera.left = -80; sunLight.shadow.camera.right = 80;
+        sunLight.shadow.camera.top = 80; sunLight.shadow.camera.bottom = -80;
+        scene.add(sunLight);
+
+        const sunSphere = new THREE.Mesh(new THREE.SphereGeometry(3, 32, 32), new THREE.MeshBasicMaterial({ color: 0xffffaa }));
+        sunSphere.position.copy(sunLight.position); scene.add(sunSphere);
+        const sunGlow = new THREE.Mesh(new THREE.SphereGeometry(6, 32, 32), new THREE.MeshBasicMaterial({ color: 0xffffaa, transparent: true, opacity: 0.15 }));
+        sunGlow.position.copy(sunLight.position); scene.add(sunGlow);
+
+        // ============================================================
+        // 地形 (基于随机种子)
+        // ============================================================
+        const CS = CFG.world.chunkSize, VR = CFG.world.viewRadius, RL = CFG.world.riverLevel, TD = CFG.world.treeDensity;
+        const chunkDataMap = new Map(), chunkMeshMap = new Map(), chunkAccessTime = new Map();
+        const solidBlocks = new Set([1, 2, 3, 4, 5]);
+
+        const BL = { AIR: 0, GRASS: 1, DIRT: 2, STONE: 3, WOOD: 4, LEAVES: 5, WATER: 6, SAND: 7 };
+        const blColors = { [BL.GRASS]: 0x7c9c4b, [BL.DIRT]: 0x8b6914, [BL.STONE]: 0x808080, [BL.WOOD]: 0x6d4c2a, [BL.LEAVES]: 0x3a7d2c, [BL.WATER]: 0x3388cc, [BL.SAND]: 0xddcc88 };
+
+        function noise2D(x, z) { const n = Math.sin(x * 12.9898 + z * 78.233 + WORLD_SEED) * 43758.5453; return n - Math.floor(n); }
+        function smoothNoise(x, z) {
+            const ix = Math.floor(x), iz = Math.floor(z); const fx = x - ix, fz = z - iz;
+            const sx = fx * fx * (3 - 2 * fx), sz = fz * fz * (3 - 2 * fz);
+            const n00 = noise2D(ix, iz), n10 = noise2D(ix + 1, iz), n01 = noise2D(ix, iz + 1), n11 = noise2D(ix + 1, iz + 1);
+            return (n00 + (n10 - n00) * sx) + ((n01 + (n11 - n01) * sx) - (n00 + (n10 - n00) * sx)) * sz;
+        }
+        function getHeight(wx, wz) {
+            let h = 0;
+            h += smoothNoise(wx * 0.03, wz * 0.03) * 8;
+            h += smoothNoise(wx * 0.06, wz * 0.06) * 4;
+            h += smoothNoise(wx * 0.12, wz * 0.12) * 2;
+            h += smoothNoise(wx * 0.25, wz * 0.25) * 1;
+            return Math.floor(h) + 2;
+        }
+        function isRiver(wx, wz) { const h = getHeight(wx, wz); if (h > RL + 1) return false; let lc = 0; for (let dx = -2; dx <= 2; dx++)for (let dz = -2; dz <= 2; dz++) if (getHeight(wx + dx, wz + dz) <= RL) lc++; return lc >= 10 && h <= RL; }
+        function hash2D(x, z) { let h = x * 374761393 + z * 668265263 + WORLD_SEED; h = (h ^ (h >> 13)) * 1274126177; return (h ^ (h >> 16)) >>> 0; }
+
+        function generateChunk(cx, cz) {
+            const key = `${cx},${cz}`;
+            if (chunkDataMap.has(key)) { chunkAccessTime.set(key, performance.now()); return chunkDataMap.get(key); }
+            const blocks = new Uint8Array(CS * 64 * CS); const wx0 = cx * CS, wz0 = cz * CS;
+            for (let lx = 0; lx < CS; lx++)for (let lz = 0; lz < CS; lz++) {
+                const wx = wx0 + lx, wz = wz0 + lz; const height = getHeight(wx, wz); const riv = isRiver(wx, wz);
+                for (let y = 0; y < 64; y++) {
+                    const idx = lx + lz * CS + y * CS * CS;
+                    if (riv && y <= RL) { if (y === RL) blocks[idx] = BL.WATER; else if (y === RL - 1) blocks[idx] = BL.SAND; else blocks[idx] = y === 0 ? BL.STONE : BL.SAND; }
+                    else { if (y === 0) blocks[idx] = BL.STONE; else if (y < height - 2) blocks[idx] = BL.STONE; else if (y < height - 1) blocks[idx] = BL.DIRT; else if (y < height) blocks[idx] = BL.GRASS; }
+                }
+                if (!riv && lx > 1 && lx < CS - 2 && lz > 1 && lz < CS - 2 && height < 55 && height > RL + 2) {
+                    const h = hash2D(wx, wz); if ((h % 1000) / 1000 < TD && height + 3 < 64) {
+                        blocks[lx + lz * CS + height * CS * CS] = BL.WOOD;
+                        blocks[lx + lz * CS + (height + 1) * CS * CS] = BL.WOOD;
+                        blocks[lx + lz * CS + (height + 2) * CS * CS] = BL.LEAVES;
+                        if (lx + 1 < CS) blocks[(lx + 1) + lz * CS + (height + 2) * CS * CS] = BL.LEAVES;
+                        if (lx - 1 >= 0) blocks[(lx - 1) + lz * CS + (height + 2) * CS * CS] = BL.LEAVES;
+                        if (lz + 1 < CS) blocks[lx + (lz + 1) * CS + (height + 2) * CS * CS] = BL.LEAVES;
+                        if (lz - 1 >= 0) blocks[lx + (lz - 1) * CS + (height + 2) * CS * CS] = BL.LEAVES;
+                    }
+                }
+            }
+            chunkDataMap.set(key, blocks); chunkAccessTime.set(key, performance.now()); return blocks;
+        }
+
+        function getBlock(wx, wy, wz) {
+            const cx = Math.floor(wx / CS), cz = Math.floor(wz / CS);
+            const lx = ((wx % CS) + CS) % CS, lz = ((wz % CS) + CS) % CS;
+            if (wy < 0 || wy >= 64) return BL.AIR;
+            try { const blocks = generateChunk(cx, cz); return blocks[Math.floor(lx) + Math.floor(lz) * CS + Math.floor(wy) * CS * CS] || BL.AIR; } catch (e) { return BL.AIR; }
+        }
+        function isSolidAt(wx, wy, wz) { return solidBlocks.has(getBlock(wx, wy, wz)); }
+        function raycastBlocks(origin, direction, maxDist) {
+            const step = 0.3, dir = direction.clone().normalize(); let d = 0, pos = origin.clone();
+            while (d < maxDist) { pos.add(dir.clone().multiplyScalar(step)); d += step; if (isSolidAt(pos.x, pos.y, pos.z)) return { hit: true, point: pos.clone(), distance: d }; }
+            return { hit: false, distance: d };
+        }
+
+        function renderChunk(cx, cz) {
+            const key = `${cx},${cz}`; if (chunkMeshMap.has(key)) { chunkAccessTime.set(key, performance.now()); return; }
+            const blocks = generateChunk(cx, cz); const mats = {}; for (const t of Object.keys(blColors)) { if (t == BL.WATER) continue; mats[t] = []; }
+            const waterMats = []; const wx = cx * CS, wz = cz * CS;
+            for (let lx = 0; lx < CS; lx++)for (let lz = 0; lz < CS; lz++)for (let y = 0; y < 64; y++) {
+                const t = blocks[lx + lz * CS + y * CS * CS]; if (t === BL.AIR) continue;
+                const m = new THREE.Matrix4();
+                if (t === BL.WATER) { m.setPosition(wx + lx + 0.5, y + 0.35, wz + lz + 0.5); waterMats.push(m); }
+                else { m.setPosition(wx + lx + 0.5, y + 0.5, wz + lz + 0.5); mats[t]?.push(m); }
+            }
+            const group = [];
+            for (const [t, arr] of Object.entries(mats)) {
+                if (!arr.length) continue;
+                const geo = new THREE.BoxGeometry(1, 1, 1);
+                const mesh = new THREE.InstancedMesh(geo, new THREE.MeshStandardMaterial({ color: blColors[t], roughness: 0.8 }), arr.length);
+                arr.forEach((m, i) => mesh.setMatrixAt(i, m));
+                mesh.castShadow = true; mesh.receiveShadow = true; scene.add(mesh); group.push(mesh);
+            }
+            if (waterMats.length > 0) {
+                const wGeo = new THREE.BoxGeometry(1, 0.7, 1);
+                const waterMat = new THREE.MeshStandardMaterial({
+                    color: blColors[BL.WATER],
+                    roughness: 0.2,
+                    transparent: true,
+                    opacity: 0.7,
+                    side: THREE.FrontSide,
+                    depthWrite: false,
+                });
+                const wMesh = new THREE.InstancedMesh(wGeo, waterMat, waterMats.length);
+                waterMats.forEach((m, i) => wMesh.setMatrixAt(i, m));
+                wMesh.receiveShadow = true; scene.add(wMesh); group.push(wMesh);
+            }
+            chunkMeshMap.set(key, group); chunkAccessTime.set(key, performance.now());
+        }
+
+        function generateWorld(cx, cz) { for (let dx = -VR; dx <= VR; dx++)for (let dz = -VR; dz <= VR; dz++)renderChunk(cx + dx, cz + dz); }
+        function cleanupMemory(cx, cz) {
+            const now = performance.now(); const toRemove = [];
+            for (const [k] of chunkMeshMap) { const [x, z] = k.split(',').map(Number); if (Math.abs(x - cx) > VR + 2 || Math.abs(z - cz) > VR + 2) toRemove.push(k); }
+            toRemove.forEach(k => removeChunk(k));
+            if (chunkDataMap.size > CFG.memory.maxCachedChunks) {
+                const entries = []; for (const [k] of chunkDataMap) { const [x, z] = k.split(',').map(Number); if (Math.abs(x - cx) <= VR + 1 && Math.abs(z - cz) <= VR + 1) continue; entries.push({ key: k, time: chunkAccessTime.get(k) || 0 }); }
+                entries.sort((a, b) => a.time - b.time); entries.slice(0, entries.length - CFG.memory.maxCachedChunks + 10).forEach(e => { chunkDataMap.delete(e.key); chunkAccessTime.delete(e.key); });
+            }
+        }
+        function removeChunk(key) {
+            const meshes = chunkMeshMap.get(key); if (meshes) { meshes.forEach(m => { if (m.geometry) m.geometry.dispose(); if (m.material) { if (Array.isArray(m.material)) m.material.forEach(mat => mat.dispose()); else m.material.dispose(); } scene.remove(m); }); }
+            chunkMeshMap.delete(key);
+        }
+        generateWorld(0, 0);
+
+        // ============================================================
+        // 加载怪物模型 (gltf)
+        // ============================================================
+        let enemyModelTemplate = null;
+        let skinTextures = [];
+
+        async function loadAssets() {
+            const loader = new GLTFLoader();
+
+            // 加载 gltf，使用内部贴图
+            const gltf = await loader.loadAsync('model.gltf');
+            enemyModelTemplate = gltf.scene;
+
+            enemyModelTemplate.traverse((child) => {
+                child.geometry.translate(0, -1, 0);
+            });
+
+            // 设置阴影
+            enemyModelTemplate.traverse((child) => {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            });
+        }
+
+        // ============================================================
+        // 子弹
+        // ============================================================
+        const bullets = [];
+        const bulletGeo = new THREE.SphereGeometry(CFG.weapon.bulletSize, 6, 6);
+        const bulletMat = new THREE.MeshBasicMaterial({ color: 0xffdd44 });
+
+        function spawnBullet(origin, direction) {
+            const mesh = new THREE.Mesh(bulletGeo, bulletMat); mesh.position.copy(origin).add(direction.clone().multiplyScalar(0.8)); scene.add(mesh);
+            const glow = new THREE.PointLight(0xffdd44, 0.8, 3); glow.position.copy(mesh.position); scene.add(glow);
+            bullets.push({ mesh, glow, direction: direction.clone(), distance: 0, speed: CFG.weapon.bulletSpeed });
+        }
+        function updateBullets() {
+            for (let i = bullets.length - 1; i >= 0; i--) {
+                const b = bullets[i]; const move = b.direction.clone().multiplyScalar(b.speed); const newPos = b.mesh.position.clone().add(move);
+                b.distance += b.speed;
+                if (b.distance >= CFG.weapon.bulletMaxDist || newPos.y < 0 || newPos.y > 70) { removeBullet(i); continue; }
+                const hit = raycastBlocks(b.mesh.position, b.direction, move.length() + 0.1);
+                if (hit.hit) { const spark = new THREE.PointLight(0xffffff, 2, 2); spark.position.copy(hit.point); scene.add(spark); setTimeout(() => scene.remove(spark), 80); removeBullet(i); continue; }
+                b.mesh.position.copy(newPos); b.glow.position.copy(newPos);
+                let hitE = false;
+                for (let j = enemies.length - 1; j >= 0; j--) { if (b.mesh.position.distanceTo(enemies[j].mesh.position) < CFG.enemy.bodyW * 0.8) { hitE = true; damageEnemy(j); break; } }
+                if (hitE) { removeBullet(i); continue; }
+            }
+        }
+        function removeBullet(index) { const b = bullets[index]; if (b.mesh.geometry) b.mesh.geometry.dispose(); if (b.mesh.material) b.mesh.material.dispose(); scene.remove(b.mesh); scene.remove(b.glow); bullets.splice(index, 1); }
+
+        // ============================================================
+        // 敌人
+        // ============================================================
+        const enemies = [];
+
+        function createEnemyModel() {
+            if (!enemyModelTemplate) return null;
+            const model = enemyModelTemplate.clone();
+            if (skinTextures.length > 0) {
+                const texture = skinTextures[Math.floor(Math.random() * skinTextures.length)];
+                model.traverse((child) => {
+                    if (child.isMesh && child.material) {
+                        child.material = child.material.clone();
+                        child.material.map = texture;
+                        child.material.needsUpdate = true;
+                    }
+                });
+            }
+            return model;
+        }
+
+        function spawnEnemy() {
+            if (enemies.length >= CFG.enemy.maxCount) return;
+            if (!enemyModelTemplate) return;
+            for (let a = 0; a < 50; a++) {
+                const angle = Math.random() * Math.PI * 2, dist = 20 + Math.random() * 30;
+                const x = camera.position.x + Math.cos(angle) * dist, z = camera.position.z + Math.sin(angle) * dist;
+                const h = getHeight(x, z);
+                if (!isSolidAt(x, h + 0.9, z) && !isSolidAt(x, h + 1.8, z)) {
+                    const model = createEnemyModel();
+                    if (!model) continue;
+                    model.position.set(x, h + CFG.enemy.bodyH / 2, z);
+                    model.castShadow = true;
+                    scene.add(model);
+                    enemies.push({ mesh: model, health: CFG.enemy.health, speed: CFG.enemy.speed, attackCd: 0, aggro: false, lastStuckTime: 0, randomAngle: Math.random() * Math.PI * 2 });
+                    return;
+                }
+            }
+        }
+
+        function damageEnemy(index) {
+            const e = enemies[index]; e.health -= CFG.weapon.damage; e.aggro = true;
+            document.getElementById('hitmarker').style.opacity = '1'; setTimeout(() => document.getElementById('hitmarker').style.opacity = '0', 80);
+            if (e.health <= 0) killEnemy(index);
+        }
+        function killEnemy(index) {
+            const e = enemies[index]; const pos = e.mesh.position.clone();
+            e.mesh.traverse((child) => {
+                if (child.geometry) child.geometry.dispose();
+                if (child.material) {
+                    if (Array.isArray(child.material)) child.material.forEach(m => m.dispose());
+                    else child.material.dispose();
+                }
+            });
+            scene.remove(e.mesh);
+            enemies.splice(index, 1); player.kills++; document.getElementById('kill-count').textContent = player.kills;
+            const roll = Math.random();
+            if (roll < CFG.loot.ammoChance) { player.reserve = Math.min(999, player.reserve + CFG.loot.ammoAmount); showPickup('+弹药', pos); }
+            else if (roll < CFG.loot.ammoChance + CFG.loot.healChance) { player.health = Math.min(player.maxHealth, player.health + CFG.loot.healAmount); document.getElementById('health-fill').style.width = (player.health / player.maxHealth * 100) + '%'; document.getElementById('health-num').textContent = player.health; showPickup('+血量', pos); }
+            updateUI();
+            if (player.kills >= CFG.flight.requiredKills && !flightUnlocked) { flightUnlocked = true; document.getElementById('flight-hint').style.display = 'block'; }
+        }
+        function showPickup(text, position) {
+            const div = document.createElement('div'); div.textContent = text;
+            div.style.cssText = `position:fixed;color:#ffd700;font-weight:900;font-size:18px;pointer-events:none;z-index:50;transition:all 0.8s ease-out;text-shadow:0 2px 6px rgba(0,0,0,0.8);`;
+            const v = position.clone().project(camera); div.style.left = (v.x * 0.5 + 0.5) * innerWidth + 'px'; div.style.top = (-v.y * 0.5 + 0.5) * innerHeight + 'px';
+            document.body.appendChild(div); requestAnimationFrame(() => { div.style.transform = 'translateY(-40px)'; div.style.opacity = '0'; }); setTimeout(() => div.remove(), 800);
+        }
+
+        // ============================================================
+        // 敌人 AI 改进：随机绕行 + 防卡逻辑
+        // ============================================================
+        function moveEnemyAI(e, dt, playerPos) {
+            const pos = e.mesh.position;
+            const dx = playerPos.x - pos.x;
+            const dz = playerPos.z - pos.z;
+            const dist = Math.sqrt(dx * dx + dz * dz);
+
+            if (!e.aggro) {
+                // 闲逛
+                e.attackCd += dt;
+                if (e.attackCd > 2) {
+                    e.attackCd = 0;
+                    const rx = pos.x + (Math.random() - 0.5) * 1.5;
+                    const rz = pos.z + (Math.random() - 0.5) * 1.5;
+                    const h = getHeight(rx, rz);
+                    if (!isSolidAt(rx, h + 0.3, rz) && !isSolidAt(rx, h + 1.2, rz)) {
+                        e.mesh.position.x = rx;
+                        e.mesh.position.z = rz;
+                    }
+                }
+                return;
+            }
+
+            // 激怒状态：追踪玩家
+            if (dist > 1.8) {
+                const dirX = dx / dist;
+                const dirZ = dz / dist;
+                const desiredX = pos.x + dirX * e.speed;
+                const desiredZ = pos.z + dirZ * e.speed;
+                const h = getHeight(desiredX, desiredZ);
+
+                // 检查目标位置是否可通过
+                const canMoveForward = !isSolidAt(desiredX, h + 0.3, desiredZ) && !isSolidAt(desiredX, h + 1.2, desiredZ);
+
+                if (canMoveForward) {
+                    e.mesh.position.x = desiredX;
+                    e.mesh.position.z = desiredZ;
+                    e.lastStuckTime = 0;
+                } else {
+                    // 被挡：尝试侧向绕行
+                    const sideAngles = [1.2, -1.2, 2.0, -2.0]; // 尝试的侧向角度（弧度）
+                    let moved = false;
+                    for (const angleOffset of sideAngles) {
+                        const testAngle = Math.atan2(dirZ, dirX) + angleOffset;
+                        const testX = pos.x + Math.cos(testAngle) * e.speed;
+                        const testZ = pos.z + Math.sin(testAngle) * e.speed;
+                        const testH = getHeight(testX, testZ);
+                        if (!isSolidAt(testX, testH + 0.3, testZ) && !isSolidAt(testX, testH + 1.2, testZ)) {
+                            e.mesh.position.x = testX;
+                            e.mesh.position.z = testZ;
+                            moved = true;
+                            break;
+                        }
+                    }
+
+                    if (!moved) {
+                        // 如果还是走不动，记录卡住时间，偶尔尝试跳跃或随机后退
+                        e.lastStuckTime += dt;
+                        if (e.lastStuckTime > 1.5) {
+                            e.lastStuckTime = 0;
+                            // 随机尝试跳跃或后退
+                            if (Math.random() < 0.6) {
+                                // 后退
+                                const backX = pos.x - dirX * e.speed * 2;
+                                const backZ = pos.z - dirZ * e.speed * 2;
+                                const backH = getHeight(backX, backZ);
+                                if (!isSolidAt(backX, backH + 0.3, backZ) && !isSolidAt(backX, backH + 1.2, backZ)) {
+                                    e.mesh.position.x = backX;
+                                    e.mesh.position.z = backZ;
+                                }
+                            }
+                            // 无法跳跃，因为没有实现跳跃功能（敌人通常不能跳跃），但可增加随机偏移
+                            e.randomAngle = Math.random() * Math.PI * 2;
+                        }
+                    }
+                }
+            }
+
+            // 攻击冷却
+            e.attackCd += dt;
+            if (dist < CFG.enemy.attackRange && e.attackCd > CFG.enemy.attackCooldown) {
+                e.attackCd = 0;
+                damagePlayer(CFG.enemy.attackDamage);
+            }
+
+            // 面向玩家
+            e.mesh.lookAt(playerPos.x, pos.y, playerPos.z);
+        }
+
+        // ============================================================
+        // 玩家
+        // ============================================================
+        const player = { health: CFG.player.maxHealth, maxHealth: CFG.player.maxHealth, ammo: CFG.weapon.maxAmmo, maxAmmo: CFG.weapon.maxAmmo, reserve: CFG.weapon.maxReserve, kills: 0, alive: true, velocity: new THREE.Vector3(), onGround: true, flying: false };
+        let flightUnlocked = false, lastJumpTime = 0;
+
+        const keys = {};
+        document.addEventListener('keydown', e => {
+            keys[e.key.toLowerCase()] = true;
+            if (e.key === ' ' && flightUnlocked && player.alive) { const now = performance.now(); if (now - lastJumpTime < CFG.flight.doubleTapWindow) { player.flying = !player.flying; player.velocity.y = player.flying ? 8 : 0; if (!player.flying) player.onGround = true; } lastJumpTime = now; }
+        });
+        document.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
+
+        const euler = new THREE.Euler(0, 0, 0, 'YXZ');
+        renderer.domElement.addEventListener('click', () => { if (innerWidth > 900) renderer.domElement.requestPointerLock(); });
+        document.addEventListener('pointerlockchange', () => { const inst = document.getElementById('instructions'); if (inst) inst.style.opacity = document.pointerLockElement === renderer.domElement ? '0.4' : '1'; });
+        document.addEventListener('mousemove', e => { if (document.pointerLockElement !== renderer.domElement) return; euler.y -= e.movementX * CFG.player.mouseSensitivity; euler.x -= e.movementY * CFG.player.mouseSensitivity; euler.x = Math.max(-1.4, Math.min(1.4, euler.x)); camera.quaternion.setFromEuler(euler); });
+
+        let touchId = null, tx = 0, ty = 0;
+        renderer.domElement.addEventListener('touchstart', e => { if (e.target.closest('button') || e.target.closest('#joystick-base')) return; const t = e.changedTouches[0]; tx = t.clientX; ty = t.clientY; touchId = t.identifier; });
+        renderer.domElement.addEventListener('touchmove', e => { if (touchId === null) return; for (const t of e.changedTouches) { if (t.identifier === touchId) { const dx = t.clientX - tx, dy = t.clientY - ty; euler.y -= dx * 0.003; euler.x -= dy * 0.003; euler.x = Math.max(-1.4, Math.min(1.4, euler.x)); camera.quaternion.setFromEuler(euler); tx = t.clientX; ty = t.clientY; } } });
+        renderer.domElement.addEventListener('touchend', () => { touchId = null; });
+
+        let joyDX = 0, joyDY = 0, joyActive = false;
+        const jb = document.getElementById('joystick-base'), jt = document.getElementById('joystick-thumb');
+        jb.addEventListener('touchstart', e => { e.preventDefault(); joyActive = true; });
+        jb.addEventListener('touchmove', e => { if (!joyActive) return; const r = jb.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2; let dx = (e.touches[0].clientX - cx) / (r.width / 2), dy = (e.touches[0].clientY - cy) / (r.height / 2); const d = Math.sqrt(dx * dx + dy * dy); if (d > 1) { dx /= d; dy /= d; } joyDX = dx; joyDY = dy; jt.style.transform = `translate(calc(-50% + ${dx * 30}px), calc(-50% + ${dy * 30}px))`; });
+        jb.addEventListener('touchend', () => { joyActive = false; joyDX = 0; joyDY = 0; jt.style.transform = 'translate(-50%,-50%)'; });
+        document.getElementById('shoot-btn').addEventListener('touchstart', e => { e.preventDefault(); shoot(); });
+        document.getElementById('jump-btn').addEventListener('touchstart', e => { e.preventDefault(); if (player.flying) { player.flying = false; player.onGround = true; } else if (player.onGround) { player.velocity.y = CFG.player.jumpVelocity; player.onGround = false; } });
+        document.getElementById('reload-btn').addEventListener('touchstart', e => { e.preventDefault(); reload(); });
+
+        let lastShot = 0;
+        function shoot() { if (!player.alive || player.ammo <= 0) return; if (performance.now() - lastShot < CFG.weapon.fireRate) return; lastShot = performance.now(); player.ammo--; updateUI(); const muzzle = camera.position.clone().add(new THREE.Vector3(0, -0.15, -0.3).applyQuaternion(camera.quaternion)); const dir = camera.getWorldDirection(new THREE.Vector3()); spawnBullet(muzzle, dir); const flash = new THREE.PointLight(0xffff00, 3, 8); flash.position.copy(muzzle); scene.add(flash); setTimeout(() => scene.remove(flash), 50); }
+        function reload() { if (!player.alive || player.ammo === player.maxAmmo || player.reserve <= 0) return; setTimeout(() => { const need = player.maxAmmo - player.ammo; const load = Math.min(need, player.reserve); player.ammo += load; player.reserve -= load; updateUI(); }, CFG.weapon.reloadTime); }
+        document.addEventListener('mousedown', e => { if (e.button === 0) shoot(); });
+        document.addEventListener('keydown', e => { if (e.key.toLowerCase() === 'r') reload(); });
+
+        function damagePlayer(amount) { if (!player.alive) return; player.health -= amount; document.getElementById('health-fill').style.width = (player.health / player.maxHealth * 100) + '%'; document.getElementById('health-num').textContent = player.health; const v = document.getElementById('damage-vignette'); v.style.borderColor = 'rgba(255,0,0,0.5)'; setTimeout(() => v.style.borderColor = 'transparent', 150); if (player.health <= 0) { player.alive = false; player.flying = false; document.getElementById('death-kills').textContent = player.kills; document.getElementById('death-screen').classList.add('active'); document.exitPointerLock(); } }
+        function updateUI() { document.getElementById('current-ammo').textContent = player.ammo; document.getElementById('reserve-ammo').textContent = player.reserve; }
+
+        // 重生
+        document.getElementById('respawn-btn').addEventListener('click', () => {
+            player.health = player.maxHealth; player.ammo = player.maxAmmo; player.reserve = CFG.weapon.maxReserve; player.kills = 0; player.alive = true; player.flying = false; flightUnlocked = false;
+            camera.position.set(0, 20, 0); euler.set(0, 0, 0); camera.quaternion.setFromEuler(euler);
+            enemies.forEach(e => { e.mesh.traverse(child => { if (child.geometry) child.geometry.dispose(); if (child.material) { if (Array.isArray(child.material)) child.material.forEach(m => m.dispose()); else child.material.dispose(); } }); scene.remove(e.mesh); }); enemies.length = 0;
+            for (let i = bullets.length - 1; i >= 0; i--)removeBullet(i);
+            for (let i = 0; i < 6; i++)spawnEnemy();
+            document.getElementById('health-fill').style.width = '100%'; document.getElementById('health-num').textContent = player.maxHealth;
+            document.getElementById('kill-count').textContent = '0'; document.getElementById('death-screen').classList.remove('active');
+            document.getElementById('flight-hint').style.display = 'none'; updateUI();
+            if (innerWidth > 900) renderer.domElement.requestPointerLock();
+        });
+
+        // ============================================================
+        // 启动流程
+        // ============================================================
+        const clock = new THREE.Clock(); let lastCX = 0, lastCZ = 0, lastMemClean = 0;
+        let gameReady = false;
+
+        function startGameLoop() {
+            if (gameReady) return;
+            gameReady = true;
+            for (let i = 0; i < 6; i++) spawnEnemy();
+            setInterval(spawnEnemy, CFG.enemy.spawnInterval);
+            animate();
+        }
+
+        function animate() {
+            requestAnimationFrame(animate); const dt = Math.min(clock.getDelta(), 0.1); const now = performance.now();
+            if (player.alive) {
+                const a = CFG.player.arrowSensitivity;
+                if (keys['arrowleft']) euler.y += a; if (keys['arrowright']) euler.y -= a; if (keys['arrowup']) euler.x -= a; if (keys['arrowdown']) euler.x += a;
+                euler.x = Math.max(-1.4, Math.min(1.4, euler.x));
+                if (keys['arrowleft'] || keys['arrowright'] || keys['arrowup'] || keys['arrowdown']) camera.quaternion.setFromEuler(euler);
+
+                const speed = player.flying ? CFG.flight.maxSpeed : CFG.player.moveSpeed;
+                const fwd = new THREE.Vector3(); camera.getWorldDirection(fwd); if (!player.flying) { fwd.y = 0; fwd.normalize(); }
+                const right = new THREE.Vector3().crossVectors(fwd, new THREE.Vector3(0, 1, 0)).normalize();
+                const dir = new THREE.Vector3();
+                if (keys['w'] || joyDY < -0.3) dir.add(fwd); if (keys['s'] || joyDY > 0.3) dir.sub(fwd);
+                if (keys['a'] || joyDX < -0.3) dir.sub(right); if (keys['d'] || joyDX > 0.3) dir.add(right);
+                if (dir.length() > 0) { dir.normalize(); const joyMag = Math.sqrt(joyDX * joyDX + joyDY * joyDY); const spd = speed * Math.max(joyMag, 1); player.velocity.x = dir.x * spd * dt; player.velocity.z = dir.z * spd * dt; if (player.flying) player.velocity.y = dir.y * spd * dt; }
+                else { player.velocity.x *= 0.85; player.velocity.z *= 0.85; if (player.flying) player.velocity.y *= 0.9; }
+                if ((keys[' '] || keys['space']) && player.onGround && !player.flying) { player.velocity.y = CFG.player.jumpVelocity; player.onGround = false; }
+                if (!player.flying) player.velocity.y -= CFG.player.gravity * dt;
+
+                const pos = camera.position; pos.x += player.velocity.x; pos.y += player.velocity.y * dt; pos.z += player.velocity.z;
+                if (!player.flying) { const groundH = getHeight(pos.x, pos.z); if (pos.y <= groundH + 1.6) { pos.y = groundH + 1.6; player.velocity.y = 0; player.onGround = true; } }
+
+                const cx = Math.floor(pos.x / CS), cz = Math.floor(pos.z / CS);
+                if (cx !== lastCX || cz !== lastCZ) { lastCX = cx; lastCZ = cz; generateWorld(cx, cz); }
+                if (now - lastMemClean > 5000) {
+                    lastMemClean = now; cleanupMemory(cx, cz);
+                    for (let i = enemies.length - 1; i >= 0; i--) { if (pos.distanceTo(enemies[i].mesh.position) > CFG.memory.enemyFarDespawn) { const e = enemies[i]; e.mesh.traverse(child => { if (child.geometry) child.geometry.dispose(); if (child.material) { if (Array.isArray(child.material)) child.material.forEach(m => m.dispose()); else child.material.dispose(); } }); scene.remove(e.mesh); enemies.splice(i, 1); } }
+                }
+
+                // 调用改进的敌人 AI
+                enemies.forEach(e => moveEnemyAI(e, dt, pos));
+                updateBullets();
+            }
+            const t = now * 0.0001; sunLight.position.x = 80 * Math.cos(t); sunLight.position.z = 60 * Math.sin(t); sunSphere.position.copy(sunLight.position); sunGlow.position.copy(sunLight.position);
+            renderer.render(scene, camera);
+        }
+
+        // 加载资产并启动
+        loadAssets().then(() => {
+            console.log('Assets loaded, starting game...');
+            startGameLoop();
+        }).catch(err => {
+            console.error('Failed to load assets:', err);
+            startGameLoop();
+        });
+
+        updateUI();
+    </script>
+</body>
+
+</html>

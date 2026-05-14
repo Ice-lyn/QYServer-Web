@@ -5,117 +5,387 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QYServer | 404 - 页面未找到</title>
+    <script>
+        window.__disablePageLoader = true;
+    </script>
     <link rel="stylesheet" href="/lib/all.css">
     <script src="/lib/AllComponents.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <style>
-    #content {
-        background: url('https://t.alcy.cc/ycy') no-repeat center center fixed;
-        background-size: cover;
-        padding: 80px 0;
-        position: relative;
+        :root {
+            --pink: #f8a5c2;
+            --purple: #a56de2;
         }
 
-        .content-box {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .content-box h2 {
-            font-size: 2.5rem;
-            color: #333;
-            margin-bottom: 30px;
+        body {
+            font-family: "微软雅黑", "Microsoft YaHei", sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #faf0f4 0%, #f5f0fa 50%, #fef9fc 100%);
+        }
+
+        #content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 80px 20px;
             position: relative;
-            padding-bottom: 15px;
+            overflow: hidden;
         }
 
-        .content-box h2::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100px;
-            height: 4px;
-            background: #f8a5c2;
-            border-radius: 2px;
+        /* 背景装饰 */
+        .bg-decoration {
+            position: fixed;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.08;
         }
 
-        hr.divider {
-            margin: 40px 0;
-            height: 50px;
-            background: #ffffff00;
-            border: none;
+        .bg-circle-1 {
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: var(--pink);
+            top: -100px;
+            right: -100px;
+            animation: float1 8s ease-in-out infinite;
         }
 
-        .content-section {
-            margin-bottom: auto;
-            background-color: #ffffffa4;
+        .bg-circle-2 {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: var(--purple);
+            bottom: -80px;
+            left: -80px;
+            animation: float2 10s ease-in-out infinite;
         }
 
-        .content-text h3 {
+        .bg-circle-3 {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: var(--pink);
+            top: 50%;
+            left: 10%;
+            animation: float3 6s ease-in-out infinite;
+        }
+
+        @keyframes float1 {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            33% {
+                transform: translate(-30px, 20px) scale(1.05);
+            }
+
+            66% {
+                transform: translate(20px, -15px) scale(0.95);
+            }
+        }
+
+        @keyframes float2 {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate(25px, -25px) scale(1.1);
+            }
+        }
+
+        @keyframes float3 {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            50% {
+                transform: translate(-20px, 30px);
+            }
+        }
+
+        /* 主卡片 */
+        .content-box {
+            position: relative;
+            z-index: 1;
+            max-width: 650px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 50px 40px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(248, 165, 194, 0.1);
+            animation: cardIn 0.6s ease-out;
+        }
+
+        @keyframes cardIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 404 大数字 */
+        .error-code {
+            font-size: 8rem;
+            font-weight: 900;
+            line-height: 1;
+            background: linear-gradient(135deg, var(--pink) 0%, var(--purple) 50%, var(--pink) 100%);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease infinite;
+            margin-bottom: 10px;
+            letter-spacing: -4px;
+        }
+
+        @keyframes gradientShift {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        /* 图标区域 */
+        .icon-area {
+            margin: 20px 0;
+            font-size: 60px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        .icon-area .fa-cube {
+            color: var(--purple);
+        }
+
+        /* 标题 */
+        .error-title {
             font-size: 1.8rem;
-            color: #333;
-            margin: 25px 0 15px;
-            line-height: 1.4;
-            text-align: center;
+            font-weight: 700;
+            color: #444;
+            margin-bottom: 12px;
         }
 
-        .content-text p {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            margin-bottom: 15px;
-            text-align: center;
+        /* 描述 */
+        .error-desc {
+            font-size: 1.05rem;
+            color: #777;
+            line-height: 1.7;
+            margin-bottom: 10px;
         }
 
-        .content-text a {
-            color: #337AB7;
-            transition: all 0.3s;
-            font-weight: bold;
-            text-align: center;
-            display: inline-block;
+        /* 分割线 */
+        .divider-dot {
+            width: 50px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--pink), var(--purple));
+            border-radius: 2px;
+            margin: 24px auto;
         }
 
-        .content-text a:hover {
-            color: #f8a5c2;
-            text-decoration: underline;
+        /* 按钮组 */
+        .action-links {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 24px;
         }
+
         .quick-link {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 10px 18px;
-            background: white;
-            border-radius: 30px;
-            color: #555;
-            font-size: 1.19rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            border: 1px solid #eee;
+            padding: 13px 24px;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
 
+        .quick-link.primary {
+            background: linear-gradient(135deg, var(--pink), var(--purple));
+            color: #fff;
+            box-shadow: 0 6px 20px rgba(248, 165, 194, 0.35);
+        }
+
+        .quick-link.primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(248, 165, 194, 0.5);
+        }
+
+        .quick-link.outline {
+            background: #fff;
+            color: var(--pink);
+            border: 2px solid var(--pink);
+        }
+
+        .quick-link.outline:hover {
+            background: rgba(248, 165, 194, 0.08);
+            transform: translateY(-3px);
+        }
+
+        /* 建议链接 */
+        .suggestions {
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 1px solid #f0e8ec;
+        }
+
+        .suggestions p {
+            font-size: 0.85rem;
+            color: #aaa;
+            margin-bottom: 12px;
+        }
+
+        .suggestions a {
+            display: inline-block;
+            color: #888;
+            text-decoration: none;
+            padding: 6px 14px;
+            margin: 3px 6px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            background: #f8f4f7;
+            transition: all 0.2s;
+        }
+
+        .suggestions a:hover {
+            background: rgba(248, 165, 194, 0.15);
+            color: var(--pink);
+        }
+
+        /* 页脚信息 */
+        .footer-note {
+            margin-top: 20px;
+            font-size: 0.75rem;
+            color: #ccc;
+        }
+
+        /* 响应式 */
+        @media (max-width: 600px) {
+            .content-box {
+                padding: 35px 25px;
+            }
+
+            .error-code {
+                font-size: 5rem;
+            }
+
+            .icon-area {
+                font-size: 40px;
+            }
+
+            .error-title {
+                font-size: 1.4rem;
+            }
+
+            .action-links {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .quick-link {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
 
 <body>
+    <!-- 背景装饰 -->
+    <div class="bg-decoration bg-circle-1"></div>
+    <div class="bg-decoration bg-circle-2"></div>
+    <div class="bg-decoration bg-circle-3"></div>
+
+    <!-- 内容区域 -->
     <section id="content">
         <div class="content-box">
-            <h2>404 - 页面未找到</h2>
-            <hr class="divider">
-            <div class="content-section">
-                <div class="content-text">
-                    <h3>哎呀！页面走丢了</h3>
-                    <p>抱歉，您访问的页面不存在。</p>
-                    <p>可能是链接错误、页面已被移动或删除。</p>
-                    <p>请检查URL是否正确，或使用以下链接返回：</p>
-                    <p><a href="/" class="quick-link" >返回首页</a></p>
-                </div>
+            <!-- 404 大数字 -->
+            <div class="error-code">404</div>
+
+            <!-- 动画图标 -->
+            <div class="icon-area">
+                <i class="fas fa-cube"></i>
             </div>
-            <hr class="divider">
-            <div class="content-section">
-                <div class="content-text">
-                </div>
+
+            <!-- 标题 -->
+            <h2 class="error-title">哎呀，这个页面迷路了</h2>
+
+            <!-- 描述 -->
+            <p class="error-desc">
+                你访问的页面可能已经被移动、删除，<br>
+                或者你输入的地址不太对呢~
+            </p>
+            <p class="error-desc" style="font-size:0.9rem;color:#bbb;">
+                错误代码: NOT_FOUND
+            </p>
+
+            <div class="divider-dot"></div>
+
+            <!-- 操作按钮 -->
+            <div class="action-links">
+                <a href="/" class="quick-link primary">
+                    <i class="fas fa-home"></i> 返回首页
+                </a>
+                <a href="javascript:history.back()" class="quick-link outline">
+                    <i class="fas fa-arrow-left"></i> 返回上页
+                </a>
             </div>
+
+            <!-- 快捷导航建议 -->
+            <div class="suggestions">
+                <p>你可能想找：</p>
+                <a href="/faq/"><i class="fas fa-question-circle"></i> 常见问题</a>
+                <a href="/download/"><i class="fas fa-download"></i> 客户端下载</a>
+                <a href="/search/"><i class="fas fa-search"></i> 在线查询</a>
+                <a href="/about/"><i class="fas fa-info-circle"></i> 关于我们</a>
+                <a href="/gallery/"><i class="fas fa-images"></i> 游戏图廊</a>
+            </div>
+
+            <!-- 页脚小字 -->
+            <p class="footer-note">QYServer &copy; 2025-2026</p>
         </div>
     </section>
 
