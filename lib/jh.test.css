@@ -10,7 +10,7 @@ body {
 
 /* 全局内容容器美化（让内容更清晰） */
 .container, .content, main {
-    background: rgba(255, 255, 255, 0.75); /* 半透明白色 */
+    background: rgba(48, 40, 40, 0.75); /* 半透明白色 */
     border-radius: 16px;
     padding: 20px;
     margin: 20px auto;
@@ -23,18 +23,6 @@ h1, h2, h3, h4 {
     font-weight: 600;
     color: #222;
     text-shadow: 0 1px 3px rgba(0,0,0,0.2);
-}
-
-/* 链接美化 */
-a {
-    color: #0078ff;
-    text-decoration: none;
-    transition: 0.2s;
-}
-
-a:hover {
-    color: #0056c9;
-    text-decoration: underline;
 }
 
 /* 搜索框美化（如果你的页面有搜索框） */
