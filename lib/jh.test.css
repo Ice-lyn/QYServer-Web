@@ -1,190 +1,57 @@
-/* jh.test.css — Halo 自定义样式 美化版 */
-/* 目标：玻璃质感、响应式容器、可访问交互和统一配色 */
-
-:root {
-    --bg-image: url("https://t.alcy.cc/ycy");
-    --accent-1: #4da3ff;
-    --accent-2: #0066ff;
-    --muted: rgba(255,255,255,0.85);
-    --glass: rgba(255,255,255,0.04);
-    --glass-strong: rgba(255,255,255,0.06);
-    --card-border: rgba(255,255,255,0.06);
-    --radius: 12px;
-    --max-width: 1100px;
-}
-
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-}
-
-html, body {
-    height: 100%;
-}
-
-/* 全局背景与字体 */
+/* 全局字体与背景 */
 body {
-    font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: url('https://t.alcy.cc/ycy') no-repeat center center fixed;
+    background-size: cover;
     margin: 0;
     padding: 0;
-    color: var(--muted);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    background:
-        linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.30)),
-        var(--bg-image) no-repeat center center fixed;
-    background-size: cover;
-    line-height: 1.6;
 }
 
-/* 中心内容容器（玻璃效果） */
+/* 全局内容容器美化（让内容更清晰） */
 .container, .content, main {
-    max-width: var(--max-width);
-    width: calc(100% - 40px);
-    margin: 28px auto;
-    padding: 28px;
+    background: rgba(48, 40, 40, 0.75); /* 半透明白色 */
     border-radius: 16px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
-    border: 1px solid var(--card-border);
-    box-shadow: 0 12px 40px rgba(2,6,23,0.6);
-    backdrop-filter: blur(8px) saturate(120%);
-    -webkit-backdrop-filter: blur(8px) saturate(120%);
+    padding: 20px;
+    margin: 20px auto;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
 }
 
-/* 标题样式 */
+/* 标题更柔和 */
 h1, h2, h3, h4 {
-    margin: 0 0 12px 0;
-    font-weight: 700;
-    color: #ffffff;
-    letter-spacing: -0.2px;
-    text-shadow: 0 4px 28px rgba(0,0,0,0.45);
+    font-weight: 600;
+    color: #222;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
-h1 { font-size: 2.1rem; }
-h2 { font-size: 1.6rem; }
-h3 { font-size: 1.25rem; }
-
-/* 链接与强调色 */
-a {
-    color: var(--accent-1);
-    text-decoration: none;
-    transition: color .18s ease, text-shadow .18s;
-}
-a:hover, a:focus {
-    color: var(--accent-2);
-    text-decoration: underline;
-    outline: none;
-}
-
-/* 按钮样式（统一按钮和 .btn） */
-button, .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px 16px;
-    border-radius: var(--radius);
-    border: none;
-    color: #fff;
-    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
-    cursor: pointer;
-    box-shadow: 0 8px 24px rgba(7,31,80,0.28);
-    transition: transform .16s ease, box-shadow .16s ease;
-    text-decoration: none;
-}
-button:hover, .btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 14px 34px rgba(7,31,80,0.32);
-}
-button:focus, .btn:focus {
-    outline: 3px solid rgba(77,163,255,0.18);
-    outline-offset: 3px;
-}
-
-/* 输入框及搜索 */
-input[type="text"], input[type="search"], textarea {
-    width: 100%;
-    padding: 12px 14px;
+/* 搜索框美化（如果你的页面有搜索框） */
+input[type="text"], input[type="search"] {
+    padding: 10px 14px;
     border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.08);
-    background: rgba(0,0,0,0.25);
-    color: var(--muted);
-    box-shadow: inset 0 2px 8px rgba(0,0,0,0.35);
-    transition: border-color .14s ease, background .14s ease;
-}
-input::placeholder, textarea::placeholder {
-    color: rgba(255,255,255,0.55);
-}
-input[type="text"]:focus, input[type="search"]:focus, textarea:focus {
-    border-color: var(--accent-1);
-    background: rgba(0,0,0,0.18);
-    outline: none;
-}
-
-/* 卡片样式（可用于文章列表、侧边卡片） */
-.card {
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    border: 1px solid rgba(255,255,255,0.04);
-    border-radius: 14px;
-    padding: 18px;
-    transition: transform .16s ease, box-shadow .16s ease;
-}
-.card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 22px 44px rgba(2,6,23,0.55);
-}
-
-/* 图片响应式与圆角 */
-img {
-    max-width: 100%;
-    height: auto;
-    display: block;
-    border-radius: 10px;
-    box-shadow: 0 8px 20px rgba(2,6,23,0.4);
-}
-
-/* 代码块与高亮 */
-pre, code {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace;
-    background: rgba(0,0,0,0.45);
-    color: #e6edf3;
-    padding: 10px 12px;
-    border-radius: 8px;
-    overflow-x: auto;
-}
-pre { padding: 14px; }
-
-/* 表格样式 */
-table {
+    border: 1px solid rgba(255,255,255,0.6);
+    background: rgba(255,255,255,0.7);
     width: 100%;
-    border-collapse: collapse;
-}
-th, td {
-    padding: 10px 12px;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-}
-th {
-    text-align: left;
-    color: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: 0.2s;
 }
 
-/* 响应式调整 */
-@media (max-width: 768px) {
-    .container, .content, main {
-        width: calc(100% - 28px);
-        padding: 18px;
-        margin: 18px auto;
-    }
-    h1 { font-size: 1.6rem; }
-    h2 { font-size: 1.25rem; }
+input[type="text"]:focus, input[type="search"]:focus {
+    border-color: #0078ff;
+    background: rgba(255,255,255,0.9);
 }
 
-/* 可访问性：键盘聚焦指示 */
-:focus {
-    outline: 3px solid rgba(77,163,255,0.12);
-    outline-offset: 2px;
+/* 按钮美化 */
+button, .btn {
+    padding: 10px 18px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(135deg, #4da3ff, #0066ff);
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transition: 0.2s;
 }
 
-/* 小的实用类 */
-.muted { color: rgba(255,255,255,0.65); }
-.accent { color: var(--accent-1); }
+button:hover, .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+}
