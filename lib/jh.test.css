@@ -5,7 +5,7 @@ body {
     background-size: cover;
     margin: 0;
     padding: 0;
-    backdrop-filter: blur(4px); /* 背景轻微模糊，让内容更突出 */
+    backdrop-filter: blur(2px); /* 背景轻微模糊，让内容更突出 */
 }
 
 /* 全局内容容器美化（让内容更清晰） */
