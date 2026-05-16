@@ -5,7 +5,6 @@ body {
     background-size: cover;
     margin: 0;
     padding: 0;
-    backdrop-filter: blur(2px); /* 背景轻微模糊，让内容更突出 */
 }
 
 /* 全局内容容器美化（让内容更清晰） */
@@ -14,7 +13,6 @@ body {
     border-radius: 16px;
     padding: 20px;
     margin: 20px auto;
-    backdrop-filter: blur(6px);
     box-shadow: 0 8px 20px rgba(0,0,0,0.15);
 }
 
@@ -31,7 +29,6 @@ input[type="text"], input[type="search"] {
     border-radius: 12px;
     border: 1px solid rgba(255,255,255,0.6);
     background: rgba(255,255,255,0.7);
-    backdrop-filter: blur(4px);
     width: 100%;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     transition: 0.2s;
