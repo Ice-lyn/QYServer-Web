@@ -1,0 +1,76 @@
+/* nav.css - simple frosted glass nav page styles */
+:root{
+    /* theme variables */
+    --bg-color: rgba(255,255,255,0.08);
+    --glass-bg: rgba(255,255,255,0.12);
+    --accent: #ff6aa3;
+    --card-radius: 14px;
+    --text-color: #fff;
+    --muted-color: rgba(255,255,255,0.85);
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:Inter, "Helvetica Neue", Arial, sans-serif;background-size:cover;background-position:center;background-repeat:no-repeat}
+body{display:flex;align-items:center;justify-content:center;padding:40px}
+.container{width:100%;max-width:1100px;background:var(--glass-bg);backdrop-filter:blur(12px) saturate(120%);-webkit-backdrop-filter:blur(12px) saturate(120%);border-radius:18px;padding:28px;box-shadow:0 10px 30px rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.08);position:relative}
+.header{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+.logo{display:flex;align-items:center;gap:12px}
+.logo img{width:44px;height:44px;border-radius:8px}
+.title{font-size:22px;color:#fff;font-weight:700}
+.subtitle{color:var(--muted-color);font-size:13px}
+.controls{margin-left:auto;display:flex;gap:8px;align-items:center}
+/* move clock to top-left corner */
+.header-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.clock{position:absolute;left:18px;top:-18px;z-index:1000;padding:6px 10px;border-radius:12px;background:linear-gradient(180deg,#2ecc71,#27ae60);color:#fff;font-weight:700;font-size:13px;box-shadow:0 8px 20px rgba(0,0,0,0.18);backdrop-filter:blur(6px)}
+
+/* prettier search bar */
+.bing-search{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.03);padding:6px;border-radius:999px;box-shadow:inset 0 1px 0 rgba(255,255,255,0.02)}
+.bing-search input[type="text"]{padding:8px 12px;border-radius:999px;border:none;background:transparent;color:var(--text-color);min-width:220px;outline:none}
+.bing-search input[type="text"]::placeholder{color:rgba(255,255,255,0.6)}
+.bing-search .btn{padding:6px 12px;border-radius:999px;background:linear-gradient(90deg,var(--accent),#7ec8ff);border:none;color:#fff;font-weight:700}
+.btn{cursor:pointer;padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.06);color:var(--text-color);font-weight:600}
+/* three-dot menu button */
+.dots-btn{width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;font-size:20px}
+
+/* popup menu for mobile */
+.popup-menu{position:fixed;right:12px;top:72px;z-index:99999;background:var(--glass-bg);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:12px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.28);display:none;min-width:200px}
+.popup-menu.show{display:block}
+.popup-menu .btn{display:block;width:100%;margin-bottom:8px;text-align:center}
+.popup-menu .app-form{display:flex;flex-direction:column;gap:6px}
+.popup-menu .app-form input{padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:var(--text-color)}
+.app-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.app-card.user-app{position:relative}
+.app-card.user-app .remove-btn{position:absolute;top:8px;right:8px;z-index:5;border-radius:8px;padding:4px 6px;background:rgba(0,0,0,0.5);color:#fff;border:none;cursor:pointer;font-weight:700}
+.app-card.user-app .remove-btn:hover{background:rgba(255,80,80,0.9)}
+.app-card{display:flex;align-items:center;gap:12px;padding:12px;border-radius:var(--card-radius);background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.06);transition:transform .18s ease,box-shadow .18s ease}
+.app-card:hover{transform:translateY(-6px);box-shadow:0 10px 30px rgba(0,0,0,0.25)}
+.app-icon{width:56px;height:56px;border-radius:10px;flex:0 0 56px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.app-icon img{width:100%;height:100%;object-fit:cover}
+.app-meta{flex:1}
+.app-name{font-size:16px;color:var(--text-color);font-weight:600}
+.app-link{color:var(--muted-color);font-size:13px;opacity:0.95}
+.badge{padding:6px 10px;border-radius:10px;background:linear-gradient(90deg,var(--accent),#7ec8ff);color:#fff;font-weight:600;font-size:12px}
+.footer{margin-top:18px;text-align:right;color:rgba(255,255,255,0.75);font-size:13px}
+/* light theme */
+body.light{--text-color:#111;--muted-color:rgba(0,0,0,0.6);--glass-bg:rgba(255,255,255,0.75);--accent:#ff6aa3}
+/* dark theme */
+body.dark{--text-color:#fff;--muted-color:rgba(255,255,255,0.85);--glass-bg:rgba(0,0,0,0.35);--accent:#7ec8ff}
+@media (max-width:640px){body{padding:16px}.container{padding:16px}.title{font-size:18px}}
+@media (max-width:760px){
+    /* hide header right (clock + search) on narrow screens; keep search available in popup */
+    .header-right{display:none}
+    .popup-menu .bing-search{display:flex}
+}
+/* Always hide inline controls and use three-dot menu on all screen sizes */
+.controls > .inline-controls { display: none; }
+.dots-btn { display: inline-flex; }
+
+/* background video styling */
+.bg-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1; /* behind the content container */
+}

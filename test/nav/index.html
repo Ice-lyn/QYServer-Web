@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>导航 - Qy Server</title>
+  <link rel="stylesheet" href="nav.css" />
+  <link rel="icon" href="https://qycloudreve.s.odn.cc/f/XDZfr/novaskin-wallpaper-insummer%20%281%29.jpg" type="image/x-icon">
+</head>
+<body style="background-image:url('https://t.alcy.cc/ycy');">
+  <div class="container">
+    <div class="header">
+      <div class="logo"><img src="https://qycloudreve.s.odn.cc/f/XDZfr/novaskin-wallpaper-insummer%20%281%29.jpg" alt="Qy"></div>
+      <div>
+        <div class="title">Qy Nav</div>
+        <div class="subtitle">快速访问你常用的服务</div>
+      </div>
+        <div class="header-right">
+          <div class="clock" id="nav-clock" aria-label="当前时间">--:--:--</div>
+          <form id="bing-search-form" class="bing-search" action="https://www.bing.com/search" method="get" target="_blank" role="search">
+            <input type="text" name="q" id="bing-q" placeholder="在 Bing 搜索..." aria-label="搜索" />
+            <button type="submit" class="btn">搜索</button>
+          </form>
+        </div>
+      <div class="controls">
+        <div class="inline-controls">
+          <button class="btn theme-toggle">切换主题</button>
+          <label class="btn" for="bg-upload">上传壁纸</label>
+          <input type="file" id="bg-upload" accept="image/*,video/*" style="display:none" />
+          <button class="btn bg-remove">移除壁纸</button>
+        </div>
+        <button class="btn dots-btn" id="dots-btn">⋯</button>
+        <div><span class="badge">应用</span></div>
+      </div>
+    </div>
+
+    <div class="app-grid">
+      <a class="app-card" href="http://qyserver.s.odn.cc/" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><img src="https://qycloudreve.s.odn.cc/f/XDZfr/novaskin-wallpaper-insummer%20%281%29.jpg" alt="Qy Server"></div>
+        <div class="app-meta">
+          <div class="app-name">Qy Server</div>
+        </div>
+      </a>
+
+      <a class="app-card" href="https://qycloudreve.s.odn.cc/" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><img src="https://qycloudreve.s.odn.cc/static/img/logo192.png" alt="Cloudreve"></div>
+        <div class="app-meta">
+          <div class="app-name">Cloudreve</div>
+          <div class="app-link"></div>
+        </div>
+      </a>
+
+      <a class="app-card" href="https://www.passnat.com/" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><img src="https://www.passnat.com/_next/static/media/passnat-logo.c1b5aac7.svg" alt="PassNAT"></div>
+        <div class="app-meta">
+          <div class="app-name">PassNAT</div>
+          <div class="app-link"></div>
+        </div>
+      </a>
+
+      
+      <a class="app-card" href="https://chat.deepseek.com/" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><img src="https://www.deepseek.com/favicon.ico" alt="DeepSeek"></div>
+        <div class="app-meta">
+          <div class="app-name">DeepSeek</div>
+          <div class="app-link"></div>
+        </div>
+      </a>
+      
+      <a class="app-card" href="https://app.rainyun.com/" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><img src="https://app.rainyun.com/favicon.ico" alt="r"></div>
+        <div class="app-meta">
+          <div class="app-name">雨云</div>
+          <div class="app-link"></div>
+        </div>
+      </a>
+      
+    </div>
+
+    <div class="footer"> </div>
+  </div>
+    <div class="popup-menu" id="popup-menu">
+      <button class="btn theme-toggle">切换主题</button>
+      <button class="btn" id="add-app-btn">添加应用</button>
+      <form id="add-app-form" class="app-form" style="display:none">
+        <input type="text" id="app-name" placeholder="应用名称" required />
+        <input type="url" id="app-icon" placeholder="图标 URL（可选）" />
+        <input type="url" id="app-url" placeholder="应用网址（例如 https://）" required />
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button type="submit" class="btn">添加</button>
+          <button type="button" id="app-cancel" class="btn">取消</button>
+        </div>
+      </form>
+      <label class="btn" for="bg-upload-popup">上传壁纸</label>
+      <input type="file" id="bg-upload-popup" accept="image/*,video/*" style="display:none" />
+      <button class="btn bg-remove">移除壁纸</button>
+    </div>
+    <script>
+      (function(){
+        const dotsBtn = document.getElementById('dots-btn');
+        const popup = document.getElementById('popup-menu');
+
+        dotsBtn.addEventListener('click', ()=>{
+          popup.classList.toggle('show');
+        });
+        
+        const themeToggles = document.querySelectorAll('.theme-toggle');
+        const bgUploads = document.querySelectorAll('#bg-upload, #bg-upload-popup');
+        const bgRemoves = document.querySelectorAll('.bg-remove');
+
+        const savedTheme = localStorage.getItem('nav_theme') || 'dark';
+        document.body.classList.remove('light','dark');
+        document.body.classList.add(savedTheme);
+
+  let currentBgObjectUrl = null;
+  const DEFAULT_BG = 'https://t.alcy.cc/ycy';
+
+        function revokeCurrentObjectUrl() {
+          if (currentBgObjectUrl) {
+            try { URL.revokeObjectURL(currentBgObjectUrl); } catch(e) {}
+            currentBgObjectUrl = null;
+          }
+        }
+
+        function removeVideoElement() {
+          const v = document.getElementById('bg-video-el');
+          if (v) {
+            try { v.pause(); } catch(e) {}
+            v.remove();
+          }
+        }
+
+        function applyBackgroundFromBlob(blob) {
+          removeVideoElement();
+          revokeCurrentObjectUrl();
+
+          if (!blob) {
+            const img = new Image();
+            img.onload = function() {
+              document.body.style.background = '';
+              document.body.style.backgroundImage = `url('${DEFAULT_BG}')`;
+              document.body.style.backgroundSize = 'cover';
+              document.body.style.backgroundPosition = 'center';
+              document.body.style.backgroundRepeat = 'no-repeat';
+            };
+            img.onerror = function() {
+              console.warn('默认壁纸加载失败，回退到渐变背景');
+              document.body.style.backgroundImage = '';
+              document.body.style.background = 'linear-gradient(180deg,#f6f7f9,#ffffff)';
+            };
+            img.src = DEFAULT_BG;
+            return;
+          }
+
+          currentBgObjectUrl = URL.createObjectURL(blob);
+          if (blob.type && blob.type.startsWith('video')) {
+            const video = document.createElement('video');
+            video.id = 'bg-video-el';
+            video.className = 'bg-video';
+            video.src = currentBgObjectUrl;
+            video.autoplay = true;
+            video.loop = true;
+            video.muted = true;
+            video.playsInline = true;
+            video.setAttribute('playsinline', '');
+            video.setAttribute('webkit-playsinline', '');
+            document.body.insertBefore(video, document.body.firstChild);
+            document.body.style.backgroundImage = 'none';
+          } else {
+            // image
+            document.body.style.backgroundImage = `url('${currentBgObjectUrl}')`;
+            document.body.style.backgroundSize = '';
+          }
+        }
+
+        function openDB() {
+          return new Promise((resolve, reject) => {
+            const req = indexedDB.open('nav_db_v1', 1);
+            req.onupgradeneeded = function(e) {
+              const db = e.target.result;
+              if (!db.objectStoreNames.contains('bg')) {
+                db.createObjectStore('bg');
+              }
+            }
+            req.onsuccess = function() { resolve(req.result); }
+            req.onerror = function() { reject(req.error); }
+          });
+        }
+
+        function putBgBlob(blob) {
+          return openDB().then(db => new Promise((resolve, reject) => {
+            const tx = db.transaction('bg', 'readwrite');
+            tx.objectStore('bg').put(blob, 'background');
+            tx.oncomplete = function() { resolve(); db.close(); }
+            tx.onerror = function() { reject(tx.error); db.close(); }
+          }));
+        }
+
+        function getBgBlob() {
+          return openDB().then(db => new Promise((resolve, reject) => {
+            const tx = db.transaction('bg', 'readonly');
+            const req = tx.objectStore('bg').get('background');
+            req.onsuccess = function() { resolve(req.result); db.close(); }
+            req.onerror = function() { reject(req.error); db.close(); }
+          }));
+        }
+
+        function removeBgBlob() {
+          return openDB().then(db => new Promise((resolve, reject) => {
+            const tx = db.transaction('bg', 'readwrite');
+            tx.objectStore('bg').delete('background');
+            tx.oncomplete = function() { resolve(); db.close(); }
+            tx.onerror = function() { reject(tx.error); db.close(); }
+          }));
+        }
+
+        getBgBlob().then(blob=>{
+          applyBackgroundFromBlob(blob);
+        }).catch(()=>applyBackgroundFromBlob(null));
+
+        themeToggles.forEach(btn=>btn.addEventListener('click', ()=>{
+          const cur = document.body.classList.contains('dark') ? 'dark' : 'light';
+          const next = cur === 'dark' ? 'light' : 'dark';
+          document.body.classList.remove('dark','light');
+          document.body.classList.add(next);
+          localStorage.setItem('nav_theme', next);
+          popup.classList.remove('show');
+        }));
+
+        bgUploads.forEach(input=>input.addEventListener('change', (e)=>{
+          const f = e.target.files && e.target.files[0];
+          if (!f) return;
+          putBgBlob(f).then(()=>{
+            applyBackgroundFromBlob(f);
+            popup.classList.remove('show');
+          }).catch(()=>alert('保存壁纸失败'));
+        }));
+
+        bgRemoves.forEach(btn=>btn.addEventListener('click', ()=>{
+          removeBgBlob().then(()=>{
+            removeVideoElement();
+            revokeCurrentObjectUrl();
+            applyBackgroundFromBlob(null);
+            popup.classList.remove('show');
+          }).catch(()=>alert('移除失败'));
+        }));
+
+        document.addEventListener('click', (e)=>{
+          if (!popup.contains(e.target) && !dotsBtn.contains(e.target)) {
+            popup.classList.remove('show');
+          }
+        });
+
+        const clockEl = document.getElementById('nav-clock');
+        function updateClock() {
+          try {
+            const now = new Date();
+            const hh = String(now.getHours()).padStart(2,'0');
+            const mm = String(now.getMinutes()).padStart(2,'0');
+            const ss = String(now.getSeconds()).padStart(2,'0');
+            clockEl.textContent = `${hh}:${mm}:${ss}`;
+          } catch (e) {
+          }
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        const bingForm = document.getElementById('bing-search-form');
+        const bingQ = document.getElementById('bing-q');
+        bingForm.addEventListener('submit', (ev)=>{
+          const v = (bingQ.value || '').trim();
+          if (!v) {
+            ev.preventDefault();
+            bingQ.focus();
+            return;
+          }
+          setTimeout(()=>{
+            try { bingQ.value = ''; bingQ.blur(); }
+            catch(e){}
+          }, 50);
+        });
+
+        const addAppBtn = document.getElementById('add-app-btn');
+        const addAppForm = document.getElementById('add-app-form');
+        const appCancelBtn = document.getElementById('app-cancel');
+        const appNameInput = document.getElementById('app-name');
+        const appIconInput = document.getElementById('app-icon');
+        const appUrlInput = document.getElementById('app-url');
+        const appGrid = document.querySelector('.app-grid');
+
+        function loadStoredApps() {
+          try {
+            const raw = localStorage.getItem('nav_apps');
+            return raw ? JSON.parse(raw) : [];
+          } catch (e) { return []; }
+        }
+        function saveStoredApps(arr) {
+          try { localStorage.setItem('nav_apps', JSON.stringify(arr)); } catch(e){}
+        }
+
+        function createAppCard(app, idx) {
+          const a = document.createElement('a');
+          a.className = 'app-card user-app';
+          a.href = app.url;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+
+          const icon = document.createElement('div'); icon.className = 'app-icon';
+          const img = document.createElement('img');
+          img.src = app.icon || 'https://t.alcy.cc/tx';
+          img.alt = app.name || '';
+          icon.appendChild(img);
+
+          const meta = document.createElement('div'); meta.className = 'app-meta';
+          const name = document.createElement('div'); name.className = 'app-name'; name.textContent = app.name || app.url;
+          meta.appendChild(name);
+
+          const removeBtn = document.createElement('button');
+          removeBtn.type = 'button';
+          removeBtn.className = 'remove-btn';
+          removeBtn.title = '删除应用';
+          removeBtn.textContent = '✕';
+          removeBtn.addEventListener('click', (ev)=>{
+            ev.preventDefault();
+            ev.stopPropagation();
+            const ok = confirm(`确认删除 “${app.name || app.url}”？`);
+            if (!ok) return;
+            const apps = loadStoredApps();
+            if (typeof idx === 'number' && apps[idx]) {
+              apps.splice(idx, 1);
+            } else {
+              const i = apps.findIndex(a=>a.url === app.url && a.name === app.name);
+              if (i !== -1) apps.splice(i,1);
+            }
+            saveStoredApps(apps);
+            renderStoredApps();
+          });
+
+          a.appendChild(icon);
+          a.appendChild(meta);
+          a.appendChild(removeBtn);
+          return a;
+        }
+
+        function renderStoredApps() {
+          const prev = appGrid.querySelectorAll('.app-card.user-app');
+          prev.forEach(n=>n.remove());
+          const apps = loadStoredApps();
+          apps.forEach((app, i)=>{
+            try {
+              const node = createAppCard(app, i);
+              appGrid.appendChild(node);
+            } catch(e){}
+          });
+        }
+
+        addAppBtn.addEventListener('click', ()=>{
+          addAppForm.style.display = addAppForm.style.display === 'none' ? 'flex' : 'none';
+        });
+        appCancelBtn.addEventListener('click', ()=>{
+          addAppForm.style.display = 'none';
+        });
+
+        addAppForm.addEventListener('submit', (ev)=>{
+          ev.preventDefault();
+          const name = (appNameInput.value || '').trim();
+          const icon = (appIconInput.value || '').trim();
+          const urlRaw = (appUrlInput.value || '').trim();
+          if (!name || !urlRaw) {
+            alert('请填写名称和网址');
+            return;
+          }
+          let url;
+          try { url = new URL(urlRaw).toString(); } catch(e){ alert('请输入有效的网址（包含 https:// 或 http://）'); return; }
+
+          const apps = loadStoredApps();
+          apps.push({ name, icon, url });
+          saveStoredApps(apps);
+          renderStoredApps();
+          // cleanup form
+          appNameInput.value = '';
+          appIconInput.value = '';
+          appUrlInput.value = '';
+          addAppForm.style.display = 'none';
+          popup.classList.remove('show');
+        });
+
+        // render on startup
+        renderStoredApps();
+      })();
+    </script>
+</body>
+</html>
