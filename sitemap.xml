@@ -32,36 +32,12 @@
     <priority>0.8</priority>
   </url>
 
-  <!-- FAQ 问题详情页 -->
-  <url>
-    <loc>https://qyserver.cc/faq/problem.html</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-
-  <!-- AI 助手独立页面 -->
-  <url>
-    <loc>https://qyserver.cc/faq/ai/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
   <!-- 图廊首页 -->
   <url>
     <loc>https://qyserver.cc/gallery/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-  </url>
-
-  <!-- 图廊详情页 -->
-  <url>
-    <loc>https://qyserver.cc/gallery/detail.html</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
   </url>
 
   <!-- 服务器指令 -->
@@ -88,14 +64,6 @@
     <priority>0.8</priority>
   </url>
 
-  <!-- 网页地图（跳转页面） -->
-  <url>
-    <loc>https://qyserver.cc/map/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-
   <!-- 更新日志 -->
   <url>
     <loc>https://qyserver.cc/updatelog/</loc>
@@ -120,19 +88,4 @@
     <priority>0.4</priority>
   </url>
 
-  <!-- 视频播放页 -->
-  <url>
-    <loc>https://qyserver.cc/video/test/</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
-  </url>
-
-  <!-- Uptime Robot 跳转 -->
-  <url>
-    <loc>http://uptime.s.3q.hair/status/qy</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
 </urlset>
