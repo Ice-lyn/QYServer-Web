@@ -973,7 +973,7 @@
             <div class="popup-message">
                 <p>欢迎来到QYServer！</p>
                 <p>请务必遵守服务器规则，共同维护良好的游戏环境</p>
-                <video src="https://qycloudreve.s.odn.cc/f/EVacp/sky.5.10.mp4" autoplay muted loop playsinline webkit-playsinline="true" preload="auto">
+                <video src="https://qycloudreve.s.odn.cc/f/5MoH5/sky.5.10.480p.mp4" autoplay muted loop playsinline webkit-playsinline="true" preload="auto">
                     您的浏览器不支持视频播放
                 </video>
                 <!-- <h2><i style="color: #f78fb3;">5.1 活动服</i></h2> -->
@@ -1208,7 +1208,7 @@
         // 页面加载时的弹窗、图片绑定等
         document.addEventListener('DOMContentLoaded', function () {
             // 公告弹窗逻辑
-            if (localStorage.getItem('dontShowPopu20260502') !== 'true') {
+            if (localStorage.getItem('dontShowPopu20260523') !== 'true') {
                 setTimeout(function () {
                     const po = document.getElementById('popupOverlay');
                     if (po) {
@@ -1220,7 +1220,7 @@
 
             document.getElementById('popupConfirm').addEventListener('click', function () {
                 if (document.getElementById('dontShowAgain').checked) {
-                    localStorage.setItem('dontShowPopu20260502', 'true');
+                    localStorage.setItem('dontShowPopu20260523', 'true');
                 }
                 const po = document.getElementById('popupOverlay');
                 if (po) po.style.display = 'none';

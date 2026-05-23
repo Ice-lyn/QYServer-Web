@@ -306,14 +306,14 @@
         const debugActions = {
             // 重置弹窗
             resetPopup() {
-                localStorage.removeItem('dontShowPopu022112');
+                localStorage.removeItem('dontShowPopu20260523');
                 this.showToast('弹窗标记已重置，下次访问首页将显示弹窗');
                 this.updatePopupStatus();
             },
 
             // 强制显示弹窗
             forceShowPopup() {
-                localStorage.removeItem('dontShowPopu022112');
+                localStorage.removeItem('dontShowPopu20260523');
                 this.showToast('已清除标记，正在跳转到首页...');
                 setTimeout(() => {
                     window.location.href = '/';
