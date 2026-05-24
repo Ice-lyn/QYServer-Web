@@ -2,365 +2,499 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>人机验证测试</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人机验证测试面板 - 自定义并发验证</title>
+    <style>
+        :root {
+            --bg: #f0f4f8;
+            --card-bg: #ffffff;
+            --text: #1a202c;
+            --text-secondary: #4a5568;
+            --text-muted: #718096;
+            --border: #e2e8f0;
+            --shadow: 0 4px 10px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.03);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.07), 0 4px 10px rgba(0, 0, 0, 0.04);
+            --radius: 12px;
+            --accent: #4f46e5;
+            --success: #10b981;
+            --danger: #ef4444;
+            --pending: #8b5cf6;
+            --info: #3b82f6;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 24px; }
+        .badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: #eef2ff; color: var(--accent); font-size: 13px; font-weight: 600;
+            padding: 6px 14px; border-radius: 20px; margin-bottom: 8px;
+            border: 1px solid rgba(79,70,229,0.15);
+        }
+        .badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: pulse 1.8s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(79,70,229,0.5)} 50%{opacity:0.4;box-shadow:0 0 0 8px rgba(79,70,229,0)} }
+        .header h1 { font-size: 28px; font-weight: 700; color: #111; }
+        .subtitle { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
+
+        /* 自定义数量控制栏 */
+        .control-bar {
+            display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+            gap: 12px; margin-bottom: 20px; padding: 16px 20px;
+            background: var(--card-bg); border-radius: var(--radius);
+            box-shadow: var(--shadow); border: 1px solid var(--border);
+        }
+        .control-label {
+            font-size: 14px; font-weight: 600; color: var(--text-secondary);
+            white-space: nowrap;
+        }
+        .input-group {
+            display: flex; align-items: center; gap: 8px;
+        }
+        .number-input {
+            width: 80px; padding: 8px 12px; border: 1.5px solid #d1d5db;
+            border-radius: 8px; font-size: 15px; font-weight: 600; text-align: center;
+            font-family: inherit; transition: border-color 0.2s;
+        }
+        .number-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
+        .range-input {
+            width: 160px; accent-color: var(--accent); cursor: pointer;
+        }
+        .current-value {
+            font-weight: 700; color: var(--accent); font-size: 16px;
+            min-width: 30px; text-align: center;
+        }
+        .btn-apply {
+            padding: 9px 18px; border-radius: 20px; font-size: 13px; font-weight: 600;
+            border: none; cursor: pointer; background: var(--accent); color: #fff;
+            transition: all 0.2s; box-shadow: 0 4px 12px rgba(79,70,229,0.2);
+            white-space: nowrap;
+        }
+        .btn-apply:hover { background: #4338ca; transform: translateY(-1px); }
+        .btn-apply:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .stats-panel {
+            display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 22px;
+        }
+        .stat-card {
+            background: var(--card-bg); border-radius: var(--radius); padding: 14px 18px;
+            box-shadow: var(--shadow); display: flex; align-items: center; gap: 10px;
+            min-width: 110px; border: 1px solid var(--border);
+        }
+        .stat-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .stat-icon.total { background: #eff6ff; color: var(--info); }
+        .stat-icon.success { background: #ecfdf5; color: var(--success); }
+        .stat-icon.pending { background: #f5f3ff; color: var(--pending); }
+        .stat-icon.failed { background: #fef2f2; color: var(--danger); }
+        .stat-icon.timer { background: #fefce8; color: #ca8a04; }
+        .stat-value { font-size: 22px; font-weight: 700; line-height: 1; color: #111; }
+        .stat-label { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+
+        .progress-wrapper {
+            flex: 1; min-width: 200px; background: var(--card-bg); border-radius: var(--radius);
+            padding: 14px 18px; box-shadow: var(--shadow); display: flex; flex-direction: column;
+            justify-content: center; gap: 8px; border: 1px solid var(--border);
+        }
+        .progress-label { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+        .progress-bar-outer { height: 8px; background: #e5e7eb; border-radius: 10px; overflow: hidden; }
+        .progress-bar-inner { height: 100%; background: var(--accent); border-radius: 10px; transition: width 0.4s; }
+        .progress-bar-inner.all-done { background: var(--success); }
+
+        .verification-grid {
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 24px;
+        }
+        @media (max-width: 1100px) { .verification-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 700px) { .verification-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 450px) { .verification-grid { grid-template-columns: 1fr; } }
+
+        .verify-card {
+            background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow);
+            border: 2px solid var(--border); padding: 16px; display: flex; flex-direction: column;
+            align-items: center; gap: 8px; position: relative; overflow: hidden; min-height: 180px;
+            transition: all 0.3s;
+        }
+        .verify-card.card-verified { border-color: #a7f3d0; background: #fafffe; }
+        .verify-card.card-failed { border-color: #fecaca; background: #fffbfb; }
+        .verify-card.card-verifying { border-color: #c7d2fe; }
+        .card-index { font-weight: 700; font-size: 13px; color: var(--text-secondary); background: #f1f5f9; padding: 2px 10px; border-radius: 10px; }
+        .progress-circle { width: 60px; height: 60px; }
+        .circle-bg { fill: none; stroke: #e5e7eb; stroke-width: 4; }
+        .circle-fg { fill: none; stroke: var(--accent); stroke-width: 4; stroke-linecap: round; transition: stroke-dashoffset 0.3s; }
+        .status-text { font-size: 11px; font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; }
+        .status-text.verifying { color: var(--accent); }
+        .status-text.verified { color: var(--success); }
+        .status-text.failed { color: var(--danger); }
+        .token-info { font-size: 10px; color: var(--text-muted); word-break: break-all; text-align: center; max-width: 100%; }
+        .card-time { font-size: 10px; color: var(--text-muted); font-family: monospace; }
+
+        .footer-actions { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        .btn {
+            display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px;
+            border-radius: 22px; font-size: 13px; font-weight: 600; border: none; cursor: pointer;
+            transition: all 0.2s; background: var(--accent); color: #fff; box-shadow: 0 4px 12px rgba(79,70,229,0.25);
+        }
+        .btn:hover { background: #4338ca; transform: translateY(-1px); }
+        .btn-outline { background: #fff; color: var(--text-secondary); border: 1.5px solid #d1d5db; box-shadow: none; }
+        .btn-outline:hover { background: #f9fafb; }
+
+        .toast {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-120px);
+            background: #111; color: #fff; padding: 10px 24px; border-radius: 24px; font-weight: 600;
+            font-size: 14px; z-index: 1000; pointer-events: none; transition: transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast.success { background: #059669; }
+        .toast.warning { background: #d97706; }
+
+        @media (max-width: 600px) {
+            .control-bar { flex-direction: column; align-items: stretch; }
+            .input-group { justify-content: center; }
+            .range-input { width: 100%; }
+        }
+    </style>
 </head>
 <body>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
-    <br>
-    <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-<cap-widget data-cap-api-endpoint="https://cap.qyserver.s.odn.cc/142133a0f7/"></cap-widget>
+    <div class="container">
+        <header class="header">
+            <div class="badge"><span class="dot"></span> 自定义并发验证</div>
+            <h1>🛡️ 人机验证测试面板</h1>
+            <p class="subtitle">自由设置验证路数 · 自动启动 · 实时进度</p>
+        </header>
+
+        <!-- 自定义数量控制栏 -->
+        <div class="control-bar">
+            <span class="control-label">🔢 并发验证数量：</span>
+            <div class="input-group">
+                <input type="number" id="numberInput" class="number-input" value="20" min="1" max="50" step="1">
+                <input type="range" id="rangeInput" class="range-input" value="20" min="1" max="50" step="1">
+                <span class="current-value" id="currentValue">20</span>
+            </div>
+            <button class="btn-apply" id="btnApply">✅ 应用并重新验证</button>
+        </div>
+
+        <div class="stats-panel">
+            <div class="stat-card"><div class="stat-icon total">📊</div><div><div class="stat-value" id="total">20</div><div class="stat-label">总数</div></div></div>
+            <div class="stat-card"><div class="stat-icon success">✅</div><div><div class="stat-value" id="successCount">0</div><div class="stat-label">通过</div></div></div>
+            <div class="stat-card"><div class="stat-icon pending">⏳</div><div><div class="stat-value" id="pendingCount">20</div><div class="stat-label">进行中</div></div></div>
+            <div class="stat-card"><div class="stat-icon failed">❌</div><div><div class="stat-value" id="failCount">0</div><div class="stat-label">失败</div></div></div>
+            <div class="stat-card"><div class="stat-icon timer">⏱️</div><div><div class="stat-value" id="elapsed">0.0s</div><div class="stat-label">耗时</div></div></div>
+            <div class="progress-wrapper">
+                <div class="progress-label"><span>整体进度</span><span id="progressPercent">0%</span></div>
+                <div class="progress-bar-outer"><div class="progress-bar-inner" id="progressBar" style="width:0%"></div></div>
+            </div>
+        </div>
+
+        <div class="verification-grid" id="grid"></div>
+
+        <div class="footer-actions">
+            <button class="btn" id="btnReset">🔄 重新验证当前数量</button>
+            <button class="btn btn-outline" id="btnRefresh">↻ 刷新页面</button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <!-- 加载 Cap 全局脚本 -->
+    <script src="https://cdn.jsdelivr.net/npm/cap-widget"></script>
+
+    <script>
+        (function() {
+            // ==================== 配置 ====================
+            const API_ENDPOINT = 'https://cap.qyserver.s.odn.cc/142133a0f7/';
+            const TIMEOUT_MS = 45000;
+            const BACKEND_VERIFY_URL = '';
+            const MAX_CONCURRENCY = 200;
+            const MIN_CONCURRENCY = 1;
+            const DEFAULT_CONCURRENCY = 10;
+
+            // ==================== 全局状态 ====================
+            let TOTAL = DEFAULT_CONCURRENCY; // 动态数量
+            const state = {
+                startTime: null,
+                timerInterval: null,
+                statuses: [],
+                progress: [],
+                tokens: [],
+                times: [],
+                capInstances: [],
+                completed: 0,
+                running: false,
+            };
+
+            // 初始化状态数组
+            function initStateArrays() {
+                state.statuses = Array(TOTAL).fill('verifying');
+                state.progress = Array(TOTAL).fill(0);
+                state.tokens = Array(TOTAL).fill(null);
+                state.times = Array(TOTAL).fill(null);
+                state.capInstances = [];
+                state.completed = 0;
+            }
+
+            // DOM 引用
+            const grid = document.getElementById('grid');
+            const successEl = document.getElementById('successCount');
+            const pendingEl = document.getElementById('pendingCount');
+            const failEl = document.getElementById('failCount');
+            const elapsedEl = document.getElementById('elapsed');
+            const progressBar = document.getElementById('progressBar');
+            const progressPercent = document.getElementById('progressPercent');
+            const totalEl = document.getElementById('total');
+            const toast = document.getElementById('toast');
+            const btnReset = document.getElementById('btnReset');
+            const btnRefresh = document.getElementById('btnRefresh');
+            const btnApply = document.getElementById('btnApply');
+            const numberInput = document.getElementById('numberInput');
+            const rangeInput = document.getElementById('rangeInput');
+            const currentValue = document.getElementById('currentValue');
+
+            // Toast 提示
+            function showToast(msg, type = '') {
+                toast.textContent = msg;
+                toast.className = 'toast ' + type + ' show';
+                setTimeout(() => toast.classList.remove('show'), 2500);
+            }
+
+            // 更新统计面板
+            function updateStats() {
+                const verified = state.statuses.filter(s => s === 'verified').length;
+                const pending = state.statuses.filter(s => s === 'verifying').length;
+                const failed = state.statuses.filter(s => s === 'failed').length;
+                successEl.textContent = verified;
+                pendingEl.textContent = pending;
+                failEl.textContent = failed;
+                totalEl.textContent = TOTAL;
+                const done = verified + failed;
+                progressBar.style.width = (done / TOTAL * 100) + '%';
+                progressPercent.textContent = Math.round(done / TOTAL * 100) + '%';
+                if (done === TOTAL) {
+                    progressBar.classList.add('all-done');
+                    if (state.timerInterval) {
+                        clearInterval(state.timerInterval);
+                        state.timerInterval = null;
+                    }
+                }
+            }
+
+            // 更新单个卡片
+            function updateCard(index) {
+                const card = document.getElementById('card-' + index);
+                if (!card) return;
+                const status = state.statuses[index];
+                const circle = card.querySelector('.circle-fg');
+                const statusText = card.querySelector('.status-text');
+                const tokenInfo = card.querySelector('.token-info');
+                const timeEl = card.querySelector('.card-time');
+
+                card.className = 'verify-card card-' + (status === 'verified' ? 'verified' : status === 'failed' ? 'failed' : 'verifying');
+                statusText.className = 'status-text ' + (status === 'verified' ? 'verified' : status === 'failed' ? 'failed' : 'verifying');
+                statusText.textContent = status === 'verified' ? '✓ 通过' : status === 'failed' ? '✗ 失败' : '验证中';
+
+                const progress = state.progress[index] || 0;
+                const circumference = 2 * Math.PI * 25;
+                const offset = circumference - (progress / 100) * circumference;
+                circle.style.strokeDasharray = circumference;
+                circle.style.strokeDashoffset = offset;
+                circle.style.stroke = status === 'verified' ? '#10b981' : status === 'failed' ? '#ef4444' : '#6366f1';
+
+                if (state.tokens[index]) {
+                    tokenInfo.textContent = 'Token: ' + state.tokens[index].substring(0, 12) + '…';
+                } else {
+                    tokenInfo.textContent = '';
+                }
+
+                if (state.times[index] !== null) {
+                    timeEl.textContent = (state.times[index] / 1000).toFixed(2) + 's';
+                } else {
+                    timeEl.textContent = '—';
+                }
+            }
+
+            // 构建卡片
+            function buildCards() {
+                grid.innerHTML = '';
+                for (let i = 0; i < TOTAL; i++) {
+                    const card = document.createElement('div');
+                    card.className = 'verify-card card-verifying';
+                    card.id = 'card-' + i;
+                    card.innerHTML = `
+                        <span class="card-index">#${String(i+1).padStart(2,'0')}</span>
+                        <svg class="progress-circle" viewBox="0 0 60 60">
+                            <circle class="circle-bg" cx="30" cy="30" r="25"></circle>
+                            <circle class="circle-fg" cx="30" cy="30" r="25" stroke-dasharray="157" stroke-dashoffset="157"></circle>
+                        </svg>
+                        <div class="status-text verifying">验证中</div>
+                        <div class="token-info"></div>
+                        <div class="card-time">—</div>
+                    `;
+                    grid.appendChild(card);
+                }
+            }
+
+            // 后端验证（可选）
+            async function verifyOnBackend(token) {
+                if (!BACKEND_VERIFY_URL) return true;
+                try {
+                    const res = await fetch(BACKEND_VERIFY_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ token }),
+                    });
+                    const data = await res.json();
+                    return data.success === true;
+                } catch {
+                    return false;
+                }
+            }
+
+            // 单个验证任务
+            async function runSingle(index) {
+                const start = Date.now();
+                const cap = new Cap({ apiEndpoint: API_ENDPOINT });
+                state.capInstances[index] = cap;
+
+                cap.addEventListener('progress', (e) => {
+                    state.progress[index] = e.detail.progress;
+                    updateCard(index);
+                });
+
+                try {
+                    const timeoutPromise = new Promise((_, reject) =>
+                        setTimeout(() => reject(new Error('TIMEOUT')), TIMEOUT_MS)
+                    );
+                    const solution = await Promise.race([cap.solve(), timeoutPromise]);
+                    const token = solution.token;
+                    if (!token) throw new Error('No token');
+
+                    const isValid = await verifyOnBackend(token);
+                    if (isValid) {
+                        state.statuses[index] = 'verified';
+                        state.tokens[index] = token;
+                    } else {
+                        state.statuses[index] = 'failed';
+                    }
+                } catch (err) {
+                    state.statuses[index] = 'failed';
+                    console.warn(`验证 #${index+1} 失败:`, err.message);
+                }
+
+                state.times[index] = Date.now() - start;
+                state.progress[index] = 100;
+                state.completed++;
+                updateCard(index);
+                updateStats();
+
+                if (state.completed === TOTAL) {
+                    const elapsed = ((Date.now() - state.startTime) / 1000).toFixed(1);
+                    const success = state.statuses.filter(s => s === 'verified').length;
+                    const msg = success === TOTAL ? `🎉 全部通过！${elapsed}s` : `完成：${success}通过，${TOTAL-success}失败`;
+                    showToast(msg, success === TOTAL ? 'success' : 'warning');
+                }
+            }
+
+            // 启动全部验证
+            async function startVerification() {
+                if (state.running) {
+                    // 强制停止当前运行的任务
+                    stopCurrentTasks();
+                }
+                // 重置状态
+                state.startTime = Date.now();
+                initStateArrays();
+                state.running = true;
+
+                // 清理旧实例
+                state.capInstances.forEach(c => { if (c.destroy) c.destroy(); });
+                state.capInstances = [];
+
+                buildCards();
+                updateStats();
+
+                if (state.timerInterval) clearInterval(state.timerInterval);
+                state.timerInterval = setInterval(() => {
+                    if (state.startTime) elapsedEl.textContent = ((Date.now() - state.startTime)/1000).toFixed(1) + 's';
+                }, 200);
+
+                showToast(`🚀 已启动${TOTAL}路并发验证`);
+
+                // 并发所有任务
+                const tasks = [];
+                for (let i = 0; i < TOTAL; i++) {
+                    tasks.push(runSingle(i));
+                }
+                await Promise.allSettled(tasks);
+                state.running = false;
+            }
+
+            // 停止当前任务
+            function stopCurrentTasks() {
+                state.capInstances.forEach(c => { if (c.destroy) c.destroy(); });
+                state.capInstances = [];
+                if (state.timerInterval) {
+                    clearInterval(state.timerInterval);
+                    state.timerInterval = null;
+                }
+                state.running = false;
+            }
+
+            // 同步输入框和滑块
+            function syncInputs(value) {
+                const num = Math.min(MAX_CONCURRENCY, Math.max(MIN_CONCURRENCY, parseInt(value) || MIN_CONCURRENCY));
+                numberInput.value = num;
+                rangeInput.value = num;
+                currentValue.textContent = num;
+                return num;
+            }
+
+            // 应用新数量
+            function applyNewCount() {
+                const newTotal = syncInputs(numberInput.value);
+                if (newTotal === TOTAL && state.running) {
+                    showToast('数量未变化，当前验证仍在进行中', 'warning');
+                    return;
+                }
+                TOTAL = newTotal;
+                startVerification();
+            }
+
+            // 事件监听
+            numberInput.addEventListener('input', () => {
+                syncInputs(numberInput.value);
+            });
+            numberInput.addEventListener('change', () => {
+                syncInputs(numberInput.value);
+            });
+            rangeInput.addEventListener('input', () => {
+                syncInputs(rangeInput.value);
+            });
+            btnApply.addEventListener('click', applyNewCount);
+            btnReset.addEventListener('click', () => startVerification());
+            btnRefresh.addEventListener('click', () => location.reload());
+
+            // 键盘回车应用
+            numberInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') applyNewCount();
+            });
+
+            // 页面加载后自动启动
+            window.addEventListener('load', () => {
+                if (typeof Cap !== 'undefined') {
+                    initStateArrays();
+                    startVerification();
+                } else {
+                    showToast('❌ Cap 库加载失败，请刷新重试', 'warning');
+                }
+            });
+
+            // 暴露到全局
+            window.startVerification = startVerification;
+        })();
+    </script>
 </body>
 </html>
