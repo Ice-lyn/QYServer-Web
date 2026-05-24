@@ -42,7 +42,6 @@
         .header h1 { font-size: 28px; font-weight: 700; color: #111; }
         .subtitle { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
 
-        /* 自定义数量控制栏 */
         .control-bar {
             display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
             gap: 12px; margin-bottom: 20px; padding: 16px 20px;
@@ -167,21 +166,21 @@
             <p class="subtitle">自由设置验证路数 · 自动启动 · 实时进度</p>
         </header>
 
-        <!-- 自定义数量控制栏 -->
+        <!-- 👇 这里同步修改了 max="200" 和 value="10" -->
         <div class="control-bar">
             <span class="control-label">🔢 并发验证数量：</span>
             <div class="input-group">
-                <input type="number" id="numberInput" class="number-input" value="20" min="1" max="50" step="1">
-                <input type="range" id="rangeInput" class="range-input" value="20" min="1" max="50" step="1">
-                <span class="current-value" id="currentValue">20</span>
+                <input type="number" id="numberInput" class="number-input" value="10" min="1" max="200" step="1">
+                <input type="range" id="rangeInput" class="range-input" value="10" min="1" max="200" step="1">
+                <span class="current-value" id="currentValue">10</span>
             </div>
             <button class="btn-apply" id="btnApply">✅ 应用并重新验证</button>
         </div>
 
         <div class="stats-panel">
-            <div class="stat-card"><div class="stat-icon total">📊</div><div><div class="stat-value" id="total">20</div><div class="stat-label">总数</div></div></div>
+            <div class="stat-card"><div class="stat-icon total">📊</div><div><div class="stat-value" id="total">10</div><div class="stat-label">总数</div></div></div>
             <div class="stat-card"><div class="stat-icon success">✅</div><div><div class="stat-value" id="successCount">0</div><div class="stat-label">通过</div></div></div>
-            <div class="stat-card"><div class="stat-icon pending">⏳</div><div><div class="stat-value" id="pendingCount">20</div><div class="stat-label">进行中</div></div></div>
+            <div class="stat-card"><div class="stat-icon pending">⏳</div><div><div class="stat-value" id="pendingCount">10</div><div class="stat-label">进行中</div></div></div>
             <div class="stat-card"><div class="stat-icon failed">❌</div><div><div class="stat-value" id="failCount">0</div><div class="stat-label">失败</div></div></div>
             <div class="stat-card"><div class="stat-icon timer">⏱️</div><div><div class="stat-value" id="elapsed">0.0s</div><div class="stat-label">耗时</div></div></div>
             <div class="progress-wrapper">
@@ -200,7 +199,6 @@
 
     <div class="toast" id="toast"></div>
 
-    <!-- 加载 Cap 全局脚本 -->
     <script src="https://cdn.jsdelivr.net/npm/cap-widget"></script>
 
     <script>
@@ -209,12 +207,11 @@
             const API_ENDPOINT = 'https://cap.qyserver.s.odn.cc/142133a0f7/';
             const TIMEOUT_MS = 45000;
             const BACKEND_VERIFY_URL = '';
-            const MAX_CONCURRENCY = 200;
+            const MAX_CONCURRENCY = 200;   // 👈 最大200
             const MIN_CONCURRENCY = 1;
-            const DEFAULT_CONCURRENCY = 10;
+            const DEFAULT_CONCURRENCY = 10; // 👈 默认10
 
-            // ==================== 全局状态 ====================
-            let TOTAL = DEFAULT_CONCURRENCY; // 动态数量
+            let TOTAL = DEFAULT_CONCURRENCY;
             const state = {
                 startTime: null,
                 timerInterval: null,
@@ -227,7 +224,6 @@
                 running: false,
             };
 
-            // 初始化状态数组
             function initStateArrays() {
                 state.statuses = Array(TOTAL).fill('verifying');
                 state.progress = Array(TOTAL).fill(0);
@@ -237,7 +233,6 @@
                 state.completed = 0;
             }
 
-            // DOM 引用
             const grid = document.getElementById('grid');
             const successEl = document.getElementById('successCount');
             const pendingEl = document.getElementById('pendingCount');
@@ -254,14 +249,12 @@
             const rangeInput = document.getElementById('rangeInput');
             const currentValue = document.getElementById('currentValue');
 
-            // Toast 提示
             function showToast(msg, type = '') {
                 toast.textContent = msg;
                 toast.className = 'toast ' + type + ' show';
                 setTimeout(() => toast.classList.remove('show'), 2500);
             }
 
-            // 更新统计面板
             function updateStats() {
                 const verified = state.statuses.filter(s => s === 'verified').length;
                 const pending = state.statuses.filter(s => s === 'verifying').length;
@@ -282,7 +275,6 @@
                 }
             }
 
-            // 更新单个卡片
             function updateCard(index) {
                 const card = document.getElementById('card-' + index);
                 if (!card) return;
@@ -316,7 +308,6 @@
                 }
             }
 
-            // 构建卡片
             function buildCards() {
                 grid.innerHTML = '';
                 for (let i = 0; i < TOTAL; i++) {
@@ -337,7 +328,6 @@
                 }
             }
 
-            // 后端验证（可选）
             async function verifyOnBackend(token) {
                 if (!BACKEND_VERIFY_URL) return true;
                 try {
@@ -353,7 +343,6 @@
                 }
             }
 
-            // 单个验证任务
             async function runSingle(index) {
                 const start = Date.now();
                 const cap = new Cap({ apiEndpoint: API_ENDPOINT });
@@ -398,18 +387,14 @@
                 }
             }
 
-            // 启动全部验证
             async function startVerification() {
                 if (state.running) {
-                    // 强制停止当前运行的任务
                     stopCurrentTasks();
                 }
-                // 重置状态
                 state.startTime = Date.now();
                 initStateArrays();
                 state.running = true;
 
-                // 清理旧实例
                 state.capInstances.forEach(c => { if (c.destroy) c.destroy(); });
                 state.capInstances = [];
 
@@ -423,7 +408,6 @@
 
                 showToast(`🚀 已启动${TOTAL}路并发验证`);
 
-                // 并发所有任务
                 const tasks = [];
                 for (let i = 0; i < TOTAL; i++) {
                     tasks.push(runSingle(i));
@@ -432,7 +416,6 @@
                 state.running = false;
             }
 
-            // 停止当前任务
             function stopCurrentTasks() {
                 state.capInstances.forEach(c => { if (c.destroy) c.destroy(); });
                 state.capInstances = [];
@@ -443,7 +426,6 @@
                 state.running = false;
             }
 
-            // 同步输入框和滑块
             function syncInputs(value) {
                 const num = Math.min(MAX_CONCURRENCY, Math.max(MIN_CONCURRENCY, parseInt(value) || MIN_CONCURRENCY));
                 numberInput.value = num;
@@ -452,7 +434,6 @@
                 return num;
             }
 
-            // 应用新数量
             function applyNewCount() {
                 const newTotal = syncInputs(numberInput.value);
                 if (newTotal === TOTAL && state.running) {
@@ -463,26 +444,17 @@
                 startVerification();
             }
 
-            // 事件监听
-            numberInput.addEventListener('input', () => {
-                syncInputs(numberInput.value);
-            });
-            numberInput.addEventListener('change', () => {
-                syncInputs(numberInput.value);
-            });
-            rangeInput.addEventListener('input', () => {
-                syncInputs(rangeInput.value);
-            });
+            numberInput.addEventListener('input', () => syncInputs(numberInput.value));
+            numberInput.addEventListener('change', () => syncInputs(numberInput.value));
+            rangeInput.addEventListener('input', () => syncInputs(rangeInput.value));
             btnApply.addEventListener('click', applyNewCount);
             btnReset.addEventListener('click', () => startVerification());
             btnRefresh.addEventListener('click', () => location.reload());
 
-            // 键盘回车应用
             numberInput.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') applyNewCount();
             });
 
-            // 页面加载后自动启动
             window.addEventListener('load', () => {
                 if (typeof Cap !== 'undefined') {
                     initStateArrays();
@@ -492,7 +464,6 @@
                 }
             });
 
-            // 暴露到全局
             window.startVerification = startVerification;
         })();
     </script>
