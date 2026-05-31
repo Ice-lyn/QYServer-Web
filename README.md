@@ -1,6 +1,6 @@
 # QYServer 服务器网站
 
-[点我前往官网](https://qyserver.cc/)
+[点我前往官网](https://www.qyserver.top/)
 
 ---
 

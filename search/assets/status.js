@@ -1,4 +1,4 @@
-const serverHost = 'mc.qyserver.cc';
+const serverHost = 'mc.qyserver.top';
 const serverPort = 41657; 
 const statusUrl = 'https://mcapi.qyserver.cc/api/status';
 const historyUrl = `https://mcapi.qyserver.cc/api/history`;

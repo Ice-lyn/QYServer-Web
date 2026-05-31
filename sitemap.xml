@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- 首页 -->
   <url>
-    <loc>https://qyserver.cc/</loc>
+    <loc>https://www.qyserver.top/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
@@ -10,7 +10,7 @@
 
   <!-- 关于页面 -->
   <url>
-    <loc>https://qyserver.cc/about/</loc>
+    <loc>https://www.qyserver.top/about/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -18,7 +18,7 @@
 
   <!-- 下载页面 -->
   <url>
-    <loc>https://qyserver.cc/download/</loc>
+    <loc>https://www.qyserver.top/download/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -26,7 +26,7 @@
 
   <!-- FAQ 问题列表 -->
   <url>
-    <loc>https://qyserver.cc/faq/</loc>
+    <loc>https://www.qyserver.top/faq/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -34,7 +34,7 @@
 
   <!-- 图廊首页 -->
   <url>
-    <loc>https://qyserver.cc/gallery/</loc>
+    <loc>https://www.qyserver.top/gallery/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -42,7 +42,7 @@
 
   <!-- 服务器指令 -->
   <url>
-    <loc>https://qyserver.cc/command/</loc>
+    <loc>https://www.qyserver.top/command/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -50,7 +50,7 @@
 
   <!-- 服务器规则 -->
   <url>
-    <loc>https://qyserver.cc/rules/</loc>
+    <loc>https://www.qyserver.top/rules/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -58,7 +58,7 @@
 
   <!-- 在线查询 -->
   <url>
-    <loc>https://qyserver.cc/search/</loc>
+    <loc>https://www.qyserver.top/search/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -66,7 +66,7 @@
 
   <!-- 更新日志 -->
   <url>
-    <loc>https://qyserver.cc/updatelog/</loc>
+    <loc>https://www.qyserver.top/updatelog/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -74,7 +74,7 @@
 
   <!-- 调试面板 -->
   <url>
-    <loc>https://qyserver.cc/debug/</loc>
+    <loc>https://www.qyserver.top/debug/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
@@ -82,7 +82,7 @@
 
   <!-- 日志查询 -->
   <url>
-    <loc>https://qyserver.cc/logs/</loc>
+    <loc>https://www.qyserver.top/logs/</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
