@@ -1,5 +1,20 @@
 [
   {
+    "date": "2026-06-14",
+    "title": "=== 小更新日志 ===",
+    "content": "[+] 增加物品展示功能\n \n# 用法&说明\n<p5>/om disitem list</p5> - 查看所有展示\n<p5>/om disitem add</p5> - 添加展示\n<p5>/om disitem remove</p5> - 移除展示\n> 适用于物品想给别人展示 但是不想丢给别人捡起来看的情况\n> 重启后展示自动失效\n \n# Code\n<a href=\"https://github.com/Ice-rink/QYServer/commit/a861a37bc1a9fee798d3066f06f963f7b9ed8443\"><p5>查看提交</p5></a>"
+  },
+  {
+    "date": "2026-06-01",
+    "title": "=== 小更新日志 ===",
+    "content": "[+] 领地方块锁\n \n# 用法 & 说明\n潜行手持钟右键 箱子/漏斗 即可上锁\n方块锁仅 领地主/锁主 有权限解锁\n \n方块锁仅阻止被玩家修改，其正常功能不影响\n只能在有权限的领地内使用，删除领地自动解锁\n \n设计灵感来源与xiang5929机器的漏斗分类总是被小白弄坏\n# Code\n<a href=\"https://github.com/Ice-rink/QYServer/commit/afa74b37a0644968627ab8c0a27105c815243498\"><p5>查看提交</p5></a>"
+  },
+  {
+    "date": "2026-05-16",
+    "title": "=== 小更新日志 ===",
+    "content": "[+] 增加方块染色功能\n \n# 用法\n潜行对方块使用染料，支持原版所有染色方块，支持牵引盒\n \n#Code\n<a href=\"https://github.com/Ice-rink/QYServer/commit/0bf258f3aa09b5900ba1bd45448c97062dcb82e6\"><p5>查看提交</p5></a>"
+  },
+  {
     "date": "2026-05-09",
     "title": "=== 小更新日志 ===",
     "content": "[+] 留言小船评论功能\n[+] 游戏内查看更新日志\n[+] 玩偶商店-翘翅斗篷商店\n<img src=\"https://qycloudreve.s.odn.cc/f/QMaik/3492ce1.webp\" width=\"60%\" style=\"height:auto;\">\n<p5>右键小船打开\n<img src=\"https://qycloudreve.s.odn.cc/f/gB1Fz/bff159.webp\" width=\"65%\" style=\"height:auto;\">\n<p5>/om updata</P><img src=\"https://qycloudreve.s.odn.cc/f/eLYhw/1778391932498.webp\" width=\"70%\" style=\"height:auto;\">\n<p5>玩偶商店边上</p5>"
