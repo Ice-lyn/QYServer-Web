@@ -2,6 +2,7 @@ const serverHost = 'mc.qyserver.top';
 const serverPort = 41657; 
 const statusUrl = 'https://mcapi.qyserver.cc/api/status';
 const historyUrl = `https://mcapi.qyserver.cc/api/history`;
+const clusterUrl = 'http://qyjavabe.s.odn.cc/api/all';
 
 function fetchStatus() {
   fetch(statusUrl)
@@ -44,10 +45,49 @@ function fetchHistory() {
     });
 }
 
+function fetchClusterStatus() {
+  fetch(clusterUrl)
+    .then(r => r.json())
+    .then(data => {
+      const container = document.getElementById('cluster-status');
+      const servers = data.servers;
+      if (!Array.isArray(servers) || servers.length === 0) {
+        container.innerHTML = '暂无服务器数据';
+        return;
+      }
+      let html = '<div class="cluster-grid">';
+      servers.forEach(s => {
+        const isOnline = s.status === 'online';
+        const cardClass = isOnline ? 'online' : 'offline';
+        const statusText = isOnline ? '<span style="color:green;">在线</span>' : '<span style="color:red;">离线</span>';
+        const playersInfo = isOnline ? `<div class="server-players">在线人数: <b>${s.online_players}</b> / ${s.max_players}</div>` : '';
+        const motdInfo = (isOnline && s.motd) ? `<div class="server-motd">${s.motd}</div>` : '';
+        const errorInfo = (!isOnline && s.error) ? `<div class="server-error">${s.error}</div>` : '';
+        const timeStr = s.last_updated ? new Date(s.last_updated).toLocaleString() : '';
+        html += `
+          <div class="cluster-card ${cardClass}">
+            <div class="server-name">${s.server}</div>
+            <div class="server-status">${statusText}</div>
+            ${playersInfo}
+            ${motdInfo}
+            ${errorInfo}
+            <div class="server-time">${timeStr}</div>
+          </div>`;
+      });
+      html += '</div>';
+      container.innerHTML = html;
+    })
+    .catch(() => {
+      document.getElementById('cluster-status').innerHTML = '集群状态获取失败';
+    });
+}
+
 fetchStatus();
 fetchHistory();
+fetchClusterStatus();
 // 每60秒重新请求状态与历史数据，避免整页刷新
 setInterval(function() {
   fetchStatus();
   fetchHistory();
+  fetchClusterStatus();
 }, 60000);
