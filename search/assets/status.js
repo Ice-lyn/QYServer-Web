@@ -2,7 +2,7 @@ const serverHost = 'mc.qyserver.top';
 const serverPort = 41657; 
 const statusUrl = 'https://mcapi.qyserver.cc/api/status';
 const historyUrl = `https://mcapi.qyserver.cc/api/history`;
-const clusterUrl = 'https://qyjavabe.s.odn.cc/api/all';
+const clusterUrl = 'https://api.qyserver.top/api/all';
 
 function fetchStatus() {
   fetch(statusUrl)
