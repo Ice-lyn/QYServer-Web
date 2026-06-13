@@ -20,7 +20,7 @@ const dbConfig = {
 };
 
 // 服务器信息
-const serverHost = '110.42.96.64';
+const serverHost = 'mc.qyserver.top';
 const serverPort = 41657;
 // =================================================
 
@@ -139,12 +139,22 @@ async function start() {
     }
   });
 
-  // ========== API：实时获取服务器状态 ==========
+  // ========== 缓存：5秒内复用上次查询结果 ==========
+  let statusCache = null;
+  let cacheTime = 0;
+  const CACHE_TTL = 5000;
+
+  // ========== API：实时获取服务器状态（带 5 秒缓存） ==========
   app.get('/api/status', async (req, res) => {
+    const now = Date.now();
+    if (statusCache && (now - cacheTime) < CACHE_TTL) {
+      return res.json(statusCache);
+    }
+
     const statusResult = await checkServerStatus();
 
     if (statusResult.success) {
-      res.json({
+      statusCache = {
         online: true,
         players: {
           online: statusResult.data.players?.online || 0,
@@ -152,7 +162,9 @@ async function start() {
         },
         motd: statusResult.data.motd?.clean || 'Unknown',
         version: statusResult.data.version
-      });
+      };
+      cacheTime = now;
+      res.json(statusCache);
     } else {
       res.json({
         online: false,
