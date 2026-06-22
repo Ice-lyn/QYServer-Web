@@ -2,7 +2,7 @@
 <html lang="zh-cn">
 
 <head>
-    <meta name=“robots”content=“noindex”>
+    <meta name="robots" content="noindex">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QYServer | 照片</title>
@@ -20,13 +20,10 @@
             font-family: Arial, sans-serif;
         }
 
-        /* 隐藏页面右侧默认滚动条（保留滚动功能） */
         html,
         body {
             -ms-overflow-style: none;
-            /* IE 10+ */
             scrollbar-width: none;
-            /* Firefox */
         }
 
         html::-webkit-scrollbar {
@@ -35,7 +32,6 @@
             display: none;
         }
 
-        /* 添加图片懒加载占位样式 */
         img.lazy {
             opacity: 0;
             transition: opacity 0.3s ease-in;
@@ -44,7 +40,6 @@
         img.lazy.loaded {
             opacity: 1;
         }
-
 
         .container {
             max-width: 1200px;
@@ -57,7 +52,6 @@
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
         }
 
-        /* 响应式图片相册样式 */
         div.img {
             overflow: hidden;
             background: transparent;
@@ -134,473 +128,41 @@
     <div class="container">
         <h2 style="font-weight: 900; font-size: 2.5rem; margin-bottom: 10px;">服务器截图</h2>
         <p class="gallery-subtitle">记录QYServer的点滴时刻，每一张都是玩家们共同的回忆 ✨</p>
-        <div class="image-grid">
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/gvLsz/2025-07-05_14.0lo5.40.png&title=服务器主城&date=2025-5-20&loc=X: 0, Y: 64, Z: 0&author=服务器管理员&uthor=fangfubin0782">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/Qlrtk/2025-07-05_14.0lo5.40.webp" alt="主城"
-                            width="600" height="400">
-                    </a>
-                    <div class="desc">服务器主城</div>
-                </div>
-            </div>
-
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/EYNsp/%E5%89%AF%E6%9C%AC_2025-07-30_14.34.22.png&title=冷月狐&date=2025-07-30&loc=X: -1828, Y: 71, Z: -300&uthor=yhxtz0852">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/evztw/%E5%89%AF%E6%9C%AC_2025-07-30_14.34.22.webp"
-                            alt="玩家建筑" width="600" height="400">
-                    </a>
-                    <div class="desc">冷月狐</div>
-                </div>
-            </div>
-
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/BmbhL/2025-07-30_14.30.40.png&title=奈何桥&&date=2025-07-30&loc=X:-1833 Y:73 Z:-293&uthor=yhxtz0852,Gddjwr">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/bQ2S6/2025-07-30_14.30.40.webp" alt="，" width="600"
-                            height="400">
-                    </a>
-                    <div class="desc">东区桥</div>
-                </div>
-            </div>
-
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/a0eIK/2025-08-15_11.46.56.jpg&title=圣剑殿&desc=原神灵能永远为世界带来快乐&date=2025-08-15&loc=&author&uthor=fuftuff2">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/a0eIK/2025-08-15_11.46.56.jpg" alt="。" width="600"
-                            height="400">
-                    </a>
-                    <div class="desc">圣剑殿</div>
-                </div>
-            </div>
-
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/KALCE/2025-07-30_16.2804.png&title=锤子镰刀&desc=&date=2025-07-30&loc=老主城或生存区附近&author=weishao22&uthor=weishao22">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/5rEh5/2025-07-30_16.2804.webp" alt="。" width="600"
-                            height="400">
-                    </a>
-                    <div class="desc">锤子镰刀</div>
-                </div>
-            </div>
-
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/lyoHr/947239979.jpg&title=樱花小亭&desc=&date=2025-07-31&loc=X: -1897, Y: 72, Z: -237&author&uthor=yhxtz0852">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/91wTz/947239.jpg" alt="。" width="600" height="400">
-                    </a>
-                    <div class="desc">樱花小亭</div>
-                </div>
-            </div>
-
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/Lxwua/2025-07-31_23.40.21.png&title=厉不厉害你坤哥&desc=鸡你太美&date=2025-07-04&loc=X: -1830, Y: 71, Z: -317&author&uthor=yhxtz0852">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/R3WTg/2025-07-31_23.40.1.jpg" alt="。" width="600"
-                            height="400">
-                    </a>
-                    <div class="desc">厉不厉害你坤哥</div>
-                </div>
-            </div>
-
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/r6jug/hjjj29.jpg&title=小码头&desc=停船休息的地方&date=2025-07-31&loc=老主城或生存区附近&author=fuftuff2&uthor=fuftuff2">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/2aeUm/hjjj29.webp" alt="。" width="600"
-                            height="400">
-                    </a>
-                    <div class="desc">小码头</div>
-                </div>
-            </div>
-
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/zoji1/2025-08-01_10.17.27.jpg&title=Level 0&desc=xxxxxx&date=xxxx&loc=xxxxxxx&author=xxxxx&uthor=fangfubin0782">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/OdWIP/2025-08-01_10.17.27.webp" alt="。" width="600"
-                            height="400">
-                    </a>
-                    <div class="desc">Level 0</div>
-                </div>
-            </div>
-
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/NdVCk/2025-08-01_10.18.56.jpg&title=???&desc=&date=xxxx-xx-xx&loc=X: x, Y: x, Z: x&author=xxx&uthor=fangfubin0782">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/ANoil/2025-08-01_10.18.56.webp" alt="。" width="600"
-                            height="400">
-                    </a>
-                    <div class="desc">???</div>
-                </div>
-            </div>
-
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/3xNTZ/2025-08-01_10.21.35.jpg&title=Level 4&desc=废弃办公室&date=xxxx-xx-xx&loc=X: x, Y: x, Z: x&authorxxx&uthor=fangfubin0782">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/WYmFr/2025-08-01_10.21.35.webp" alt="。" width="600"
-                            height="400">
-                    </a>
-                    <div class="desc">Level 4</div>
-                </div>
-            </div>
-
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/ZWvIo/2025-08-01_12.58.08.jpg&title=樱花塔楼&desc=&date=2025-08-01&loc=&author=&uthor=yanying1145">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/mz6i9/2025-08-01_12.58.08.webp" alt="。" width="600"
-                            height="400">
-                    </a>
-                    <div class="desc">樱花塔楼</div>
-                </div>
-            </div>
-
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/oz3IE/PixPin_2025-08-01_17-04-00.jpg&title=合照&desc=&date=2025-08-01&loc=X:-2697,Y:67,Z:4370&author=weishao22&uthor=">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/Y3Vcl/PixPin_2025-08-01_17-04-00.webp" alt="。"
-                            width="600" height="400">
-                    </a>
-                    <div class="desc">合照</div>
-                </div>
-            </div>
-
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/Drvi5/E0B6D2DD4D7EC40150C917EB713B62D0.png&title=合照&desc=&date=2025-08-01&loc=X:-2697,Y:67,Z:4370&author=fuftuff2&uthor=">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/jjJcl/E0B6D2DD4D7EC40150C917EB713B62D0.webp"
-                            alt="。" width="600" height="400">
-                    </a>
-                    <div class="desc">合照</div>
-                </div>
-            </div>
-
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/wJzfX/2CE62AF534183E42333F030D13B83C96.jpg&title=合照&desc=&date=2025-08-01&loc=X:-2697,Y:67,Z:4370&author=fangfubin0782&uthor=">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/M0Yhl/2CE62AF534183E42333F030D13B83C96.webp"
-                            alt="。" width="600" height="400">
-                    </a>
-                    <div class="desc">合照</div>
-                </div>
-            </div>
-
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/0Bes3/PixPin_2025-08-01_22-19-55.jpg&title=樱花岛&desc=&date=2025-08-01&loc=&author=weishao22&uthor=FauxMusse153,AheadSpace11489">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/VjEHr/PixPin_2025-08-01_22-19-55.webp" alt="。"
-                            width="600" height="400">
-                    </a>
-                    <div class="desc">樱花岛</div>
-                </div>
-            </div>
-
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/nzzhd/2025-08-03_17.23.41.png&title=附魔亭&desc=&date=2025-08-03&loc=&author=&uthor=">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/139uW/2025-08-03_17.23.41.webp" alt="描述"
-                            width="600" height="400">
-                    </a>
-                    <div class="desc">附魔亭</div>
-                </div>
-            </div>
-
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/vALcO/2025-08-03_23.53.14.png&title=礼堂&desc=&date=2025-08-03&loc=&author=&uthor=">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/dWAfY/2025-08-03_23.53.14.webp" alt="描述"
-                            width="600" height="400">
-                    </a>
-                    <div class="desc">礼堂</div>
-                </div>
-            </div>
-
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/XwZhr/2025-08-04_15.54.56.jpg&title=终末一号&desc=服务器唯一的小型空间站&date=2025-08-04&loc=X:1145 Z:-1145&author=&uthor=mcxiaot145">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/PWjS6/2025-08-04_15.54.56.webp" alt="1" width="600"
-                            height="400">
-                    </a>
-                    <div class="desc">终末一号</div>
-                </div>
-            </div>
-
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/ykRuB/2025-08-06_19.18.57.png&title=四川舰(航母版)&desc=描述&date=2025-08-06&loc=&author=&uthor=yhxtz0852">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/qzgIX/2025-08-06_19.18.57.webp" alt="" width="600"
-                            height="400">
-                    </a>
-                    <div class="desc">四川舰(航母版)</div>
-                </div>
-            </div>
-
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/JX3Sw/2025-08-17_23.53.28.png&title=客寨&desc=吃喝休息的不二之选&date=2025-08-17&loc=未知&author=&uthor=yhxtz0852">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/pzgTX/2025-08-17_23.53.28.webp" alt="" width="600"
-                            height="400">
-                    </a>
-                    <div class="desc">客寨</div>
-                </div>
-            </div>
-
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/6Y6Ub/2025-08-25_16.35.42.png&title=奶茶店&desc=秋天的第一杯奶茶&date=2025-08-25&loc=&author=weishao22&uthor=weishao22">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/kMkSl/2025-08-25_16.35.42.webp" alt="" width="600"
-                            height="400">
-                    </a>
-                    <div class="desc">奶茶店</div>
-                </div>
-            </div>
-
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/xJKS1/2025-08-25_16.38.19.png&title=小吃摊&desc=客官来点什么？&date=2025-08-25&loc=&author=weishao22&uthor=weishao22">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/aMehK/2025-08-25_16.38.19.webp" alt="" width="600"
-                            height="400">
-                    </a>
-                    <div class="desc">小吃摊</div>
-                </div>
-            </div>
-
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/goLcz/2025-08-25_16.33.51.png&title=小鸟游六花&desc=&date=2025-08-25&loc=&author=&uthor=yhxtz0852">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/Qmrhk/2025-08-25_16.33.51.webp" alt="小鸟游六花"
-                            width="600" height="400">
-                    </a>
-                    <div class="desc">小鸟游六花</div>
-                </div>
-            </div>
-
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/E6Ncp/2025-08-25_16.37.48.png&title=王小兆&desc=苦呀西&date=2025-08-25&loc=&author=&uthor=yhxtz0852">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/emzUw/2025-08-25_16.37.48.webp" alt="王小兆"
-                            width="600" height="400">
-                    </a>
-                    <div class="desc">王小兆</div>
-                </div>
-            </div>
-
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/BabsL/2025-09-06_17.05.17.png&title=四叶草的小家&desc=&date=2025-09-06&loc=&author=&uthor=四叶草">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/bw2F6/2025-09-06_17.05.17.webp" alt="四叶草的小家"
-                            width="600" height="400">
-                    </a>
-                    <div class="desc">四叶草的小家</div>
-                </div>
-            </div>
-
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/K0LsE/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202025-10-06%20205319.png&title=中秋节合照&desc=合照&date=2025-10-06&loc=&author=nightwanwan7924&uthor=yhxtz0852">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/9MwHz/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202025-10-06%20205319.webp"
-                            alt="中秋节合照" width="600" height="400">
-                    </a>
-                    <div class="desc">中秋节合照</div>
-                </div>
-            </div>
-
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/5oEt5/94f10f21969dfc23b8ab767d4a21a7fb.jpeg&title=中秋节合照&desc=中秋节快乐&date=2025.10.06&loc=&author=weishao22&uthor=yhxtz0852">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/5oEt5/94f10f21969dfc23b8ab767d4a21a7fb.jpeg"
-                            alt="中秋节合照" width="600" height="400">
-                    </a>
-                    <div class="desc">中秋节合照</div>
-                </div>
-            </div>
-
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/wmEUX/2026-01-01_00.01.51.png&title=跨年合照&desc=&date=2026.01.01&loc=活动服&author=weishao22&uthor=yhxtz0852">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/MqMHl/2026-01-01_00.01.55.webp" alt="跨年合照"
-                            width="600" height="400">
-                    </a>
-                    <div class="desc">跨年合照</div>
-                </div>
-            </div>
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/nqahd/%E5%89%AA%E8%B4%B4%E6%9D%BF%201767282321860.jpg&title=元旦合照&desc=&date=2026.01.01&loc=活动服&author=weishao22&uthor=">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/0kEh3/%E5%89%AA%E8%B4%B4%E6%9D%BF%201767282423903.webp"
-                            alt="元旦合照" width="600" height="400">
-                    </a>
-                    <div class="desc">元旦合照</div>
-                </div>
-            </div>
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/dA3iY/%E5%89%AA%E8%B4%B4%E6%9D%BF%201767282759502.jpg&title=元旦合照&desc=&date=2026.01.01&loc=活动服&author=weishao22&uthor=">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/1EAtW/2026-01-01_22.09.18_2.webp" alt="元旦合照"
-                            width="600" height="400">
-                    </a>
-                    <div class="desc">元旦合照</div>
-                </div>
-            </div>
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/yo5UB/2026-01-01_22.20.12.jpg&title=元旦合照&desc=&date=2026.01.01&loc=活动服&author=fuftuff2&uthor=">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/qqjIX/2026-01-01_22.19.58.webp" alt="元旦合照"
-                            width="600" height="400">
-                    </a>
-                    <div class="desc">元旦合照</div>
-                </div>
-            </div>
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/Qz6Ik/Screenshot_2026-01-11-16-46-29-870_com.mojang.minecraftpe.patxx.jpg&title=魔女邸宅&desc=一座紫色调中世纪风格建筑，作者:B站猪球猪仔（内饰真的很牢）&date=2026-01-11&loc=-36384 71.00 -12400&author=wmtcbz100c&uthor=wmtcbz100c">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/xZqC1/Screenshot_2026-01-11-16-46-29-870_com.mojang.minecraftpe.patxx.webp"
-                            alt="魔女邸宅" width="600" height="400">
-                    </a>
-                    <div class="desc">魔女邸宅</div>
-                </div>
-            </div>
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/pLlIX/2026-05-03_22.28.03.png&title=5.1_合照&desc=&date=2026-05-3&loc=阿巴&author=&uthor=">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/JzySw/2026-05-03_22.28.03.webp"
-                            alt="5.1 _合照" width="600" height="400">
-                    </a>
-                    <div class="desc">5.1 _合照</div>
-                </div>
-            </div>
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/6wRTb/2026-05-03_20.10.41.png&title=神陨之地&desc=&date=2026-05-3&loc=&author=weishao22&uthor=">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/kzeIl/2026-05-03_20.10.41.webp"
-                            alt="神陨之地" width="600" height="400">
-                    </a>
-                    <div class="desc">神陨之地</div>
-                </div>
-            </div>
-            <div class="responsive">
-                <div class="img">
-                    <a
-                        href="detail.html?img=https://qycloudreve.s.odn.cc/f/9n3Tz/5122B47A8FB1DF33134967ADBF783584.jpg&title=方块世界的向晚&desc=吹过方块世界的风，带走了白天的喧嚣。金黄色的麦浪在夕阳下发光，旁边的传送门正闪烁着紫色的幽光。远处的山头还开满了粉色的樱花。在这个世界里，不赶路，只感受路。🌾✨&date=2026-6-21&loc=出生点&author=bai-lu-67&uthor=bai-lu-67">
-                        <img class="lazy"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                            data-src="https://qycloudreve.s.odn.cc/f/KmatE/5122B47A8FB1DF33134967ADBF783584.webp"
-                            alt="方块世界的向晚" width="600" height="400">
-                    </a>
-                    <div class="desc">方块世界的向晚</div>
-                </div>
-            </div>
-
+        <div class="image-grid" id="imageGrid">
         </div>
     </div>
     
     <script src="/lib/all.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        const placeholder = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+
+        function buildUrl(img) {
+            const params = new URLSearchParams();
+            params.set('img', img.imageUrl);
+            params.set('title', img.title);
+            if (img.description) params.set('desc', img.description);
+            params.set('date', img.date);
+            params.set('loc', img.location || '');
+            params.set('author', img.author || '');
+            params.set('uthor', img.uthor || '');
+            return 'detail.html?' + params.toString();
+        }
+
+        function createImageCard(img) {
+            const div = document.createElement('div');
+            div.className = 'responsive';
+            div.innerHTML =
+                '<div class="img">' +
+                    '<a href="' + buildUrl(img) + '">' +
+                        '<img class="lazy" src="' + placeholder + '" data-src="' + img.thumbnailUrl + '" alt="' + img.title + '" width="600" height="400">' +
+                    '</a>' +
+                    '<div class="desc">' + img.title + '</div>' +
+                '</div>' +
+            '</div>';
+            return div;
+        }
+
+        function initLazyLoad() {
             let lazyImages = [].slice.call(document.querySelectorAll("img.lazy"));
 
             if ("IntersectionObserver" in window) {
@@ -609,7 +171,12 @@
                         if (entry.isIntersecting) {
                             let lazyImage = entry.target;
                             lazyImage.src = lazyImage.dataset.src;
-                            lazyImage.classList.add("loaded");
+                            lazyImage.onload = function () {
+                                lazyImage.classList.add("loaded");
+                            };
+                            if (lazyImage.complete) {
+                                lazyImage.classList.add("loaded");
+                            }
                             lazyImageObserver.unobserve(lazyImage);
                         }
                     });
@@ -619,7 +186,6 @@
                     lazyImageObserver.observe(lazyImage);
                 });
             } else {
-                // 备用方案
                 let active = false;
                 const lazyLoad = function () {
                     if (active === false) {
@@ -628,7 +194,12 @@
                             lazyImages.forEach(function (lazyImage) {
                                 if ((lazyImage.getBoundingClientRect().top <= window.innerHeight && lazyImage.getBoundingClientRect().bottom >= 0) && getComputedStyle(lazyImage).display !== "none") {
                                     lazyImage.src = lazyImage.dataset.src;
-                                    lazyImage.classList.add("loaded");
+                                    lazyImage.onload = function () {
+                                        lazyImage.classList.add("loaded");
+                                    };
+                                    if (lazyImage.complete) {
+                                        lazyImage.classList.add("loaded");
+                                    }
                                     lazyImages = lazyImages.filter(function (image) {
                                         return image !== lazyImage;
                                     });
@@ -648,6 +219,25 @@
                 window.addEventListener("orientationchange", lazyLoad);
                 lazyLoad();
             }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch('/Configs/images.json')
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+                .then(images => {
+                    const grid = document.getElementById('imageGrid');
+                    images.forEach(function (img) {
+                        grid.appendChild(createImageCard(img));
+                    });
+                    initLazyLoad();
+                })
+                .catch(error => {
+                    console.error('Failed to load gallery images:', error);
+                    document.getElementById('imageGrid').innerHTML = '<p style="color:#fff;text-align:center;width:100%;">加载失败</p>';
+                });
         });
     </script>
 </body>
