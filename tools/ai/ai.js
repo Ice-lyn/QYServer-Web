@@ -5,7 +5,7 @@
     const is_debug = true; // 可以继续用 debug 模式，但逻辑已修复
 
     const config = {
-        apiUrl: 'https://aiapi.qyserver.cc/api/ai/stream',
+        apiUrl: 'https://api.qyserver.top/api/ai/stream',
         // apiUrl: 'http://localhost:3001/api/ai/stream',
         maxHistoryChars: 2000,
         timeout: 60000,

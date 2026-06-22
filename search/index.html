@@ -311,6 +311,72 @@
         .popup-confirm:hover {
             background-color: #f78fb3;
         }
+
+        .cluster-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+            margin-top: 1em;
+        }
+
+        .cluster-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid #ddd;
+            transition: transform 0.2s;
+        }
+
+        .cluster-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .cluster-card.online {
+            border-left-color: #4caf50;
+        }
+
+        .cluster-card.offline {
+            border-left-color: #f44336;
+        }
+
+        .cluster-card .server-name {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .cluster-card .server-status {
+            font-size: 0.9em;
+            margin-bottom: 6px;
+        }
+
+        .cluster-card .server-players {
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .cluster-card .server-motd {
+            font-size: 0.8em;
+            color: #888;
+            margin-top: 8px;
+            word-break: break-all;
+            line-height: 1.4;
+        }
+
+        .cluster-card .server-error {
+            font-size: 0.8em;
+            color: #f44336;
+            margin-top: 4px;
+        }
+
+        .cluster-card .server-time {
+            font-size: 0.75em;
+            color: #aaa;
+            margin-top: 8px;
+        }
     </style>
 </head>
 
@@ -337,6 +403,12 @@
             </thead>
             <tbody></tbody>
         </table>
+    </div>
+
+    <!-- 多服务器在线状态 -->
+    <div class="status-box">
+        <div class="status-title">互通服集群状态</div>
+        <div id="cluster-status">加载中...</div>
     </div>
 
     <script src="assets/status.js"></script>
