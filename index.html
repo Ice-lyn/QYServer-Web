@@ -973,11 +973,12 @@
             <div class="popup-message">
                 <p>欢迎来到QYServer！</p>
                 <p>请务必遵守服务器规则，共同维护良好的游戏环境</p>
+                <h3><i style="color: #ff2222;">服务器网络节点疑似被攻击</i></h3>
+                <h3><i style="color: #ff2222;">可能会出现大量掉线问题请谅解</i></h3>
                 <video src="https://cf-storage.qyserver.top/sky.5.10.mp4" autoplay muted loop playsinline webkit-playsinline="true" preload="auto">
                     您的浏览器不支持视频播放
                 </video>
-                <!-- <h2><i style="color: #f78fb3;">5.1 活动服</i></h2> -->
-                <!-- <P><i class="fas fa-bullhorn" style="color: #f8a5c2; margin-right: 10px;"></i>合照将于2026年5月3日晚上8点半至10点之间</P> -->
+                <!-- <p><i class="fas fa-bullhorn" style="color: #f8a5c2; margin-right: 10px;"></i>合照将于2026年5月3日晚上8点半至10点之间</p> -->
                 <!-- <p>java地址：<i style="color:#f8a5c2;">java.qyserver.top</i></p> -->
                 <!-- <p>基岩地址：<i style="color: #f8a5c2;" >javabe.qyserver.top</i></p> -->
                 <!-- <p>基岩端口：<i style="color: #f8a5c2;" >41659</i></p> -->
@@ -1206,7 +1207,7 @@
         // 页面加载时的弹窗、图片绑定等
         document.addEventListener('DOMContentLoaded', function () {
             // 公告弹窗逻辑
-            if (localStorage.getItem('dontShowPopu20260622') !== 'true') {
+            if (localStorage.getItem('dontShowPopu20260625') !== 'true') {
                 setTimeout(function () {
                     const po = document.getElementById('popupOverlay');
                     if (po) {
@@ -1218,7 +1219,7 @@
 
             document.getElementById('popupConfirm').addEventListener('click', function () {
                 if (document.getElementById('dontShowAgain').checked) {
-                    localStorage.setItem('dontShowPopu20260622', 'true');
+                    localStorage.setItem('dontShowPopu20260625', 'true');
                 }
                 const po = document.getElementById('popupOverlay');
                 if (po) po.style.display = 'none';
