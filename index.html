@@ -492,14 +492,14 @@
             background: rgba(255, 255, 255, 0.98);
             padding: 18px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
-            /* 🟢 添加以下两行，让输入框固定在底部 */
+            /*  添加以下两行，让输入框固定在底部 */
             height: 56vh;
             min-height: 420px;
             display: flex;
             flex-direction: column;
         }
 
-        /* 🟢 消息区自动占满剩余空间，超出滚动 */
+        /* 消息区自动占满剩余空间，超出滚动 */
         .messages {
             flex: 1;
             overflow-y: auto;
@@ -510,7 +510,7 @@
             gap: 10px;
         }
 
-        /* 🟢 输入区固定在底部 */
+        /* 输入区固定在底部 */
         .input-area {
             display: flex;
             gap: 8px;
@@ -964,43 +964,14 @@
 </head>
 
 <body>
-    <!-- 弹窗提醒 -->
+    <!-- 弹窗提醒（内容改由底部的 JS 动态异步塞入） -->
     <div class="popup-overlay" id="popupOverlay">
         <div class="popup-content">
             <div class="popup-title">
-                <h2>公告</h2>
+                <h2 id="dynamicPopupTitle">加载中...</h2>
             </div>
-            <div class="popup-message">
-                <p>欢迎来到QYServer！</p>
-                <p>请务必遵守服务器规则，共同维护良好的游戏环境</p>
-                <h3><i style="color: #ff2222;">服务器网络节点疑似被攻击</i></h3>
-                <h3><i style="color: #ff2222;">可能会出现大量掉线问题请谅解</i></h3>
-                <video src="https://cf-storage.qyserver.top/sky.5.10.mp4" autoplay muted loop playsinline webkit-playsinline="true" preload="auto">
-                    您的浏览器不支持视频播放
-                </video>
-                <!-- <p><i class="fas fa-bullhorn" style="color: #f8a5c2; margin-right: 10px;"></i>合照将于2026年5月3日晚上8点半至10点之间</p> -->
-                <!-- <p>java地址：<i style="color:#f8a5c2;">java.qyserver.top</i></p> -->
-                <!-- <p>基岩地址：<i style="color: #f8a5c2;" >javabe.qyserver.top</i></p> -->
-                <!-- <p>基岩端口：<i style="color: #f8a5c2;" >41659</i></p> -->
-                <!-- <p>基岩支持版本： 1.21.130, 1.21.131, 1.21.132, 26.0, 26.1, 26.2, 26.3, 26.10</p> -->
-                <!-- <p>java除最新以外全部支持推荐：1.21.8</p> -->
-                <!-- <h5>如果您不是以上版本请点击以下链接来下载</h5> -->
-                <!-- <a href="/download/" class="quick-link"><i class="fas fa-download"></i>下载共存版</a> -->
-                <div class="popup-image">
-                    <a
-                        href="/gallery/detail.html?img=https://qycloudreve.s.odn.cc/f/pLlIX/2026-05-03_22.28.03.png&title=5.1%E6%B4%BB%E5%8A%A8%E6%9C%8D%E5%90%88%E7%85%A7&desc=5k 超清图片&date=2026.05.03&loc=%E6%B4%BB%E5%8A%A8%E6%9C%8D&author=weishao22&uthor=">
-                        <img src="https://qycloudreve.s.odn.cc/f/JzySw/2026-05-03_22.28.03.webp" alt="5.1活动服合照">
-                    </a>
-                    <p style="color: #888; font-size: 0.8rem; margin-top: 8px;">（5.1活动服合照）</p>
-                </div>
-                <h5>如果您的版本不正确，请点击以下链接来下载共存版客户端</h5>
-                <a href="/download/" class="quick-link"><i class="fas fa-download"></i>下载共存版</a>
-                <p>游戏延迟高输入 <i style="color: #ff8db5;">/server</i> 来切换线路</p>
-                <p>推荐的互通服务器：</p>
-                <p>🎮java版地址：<i style="color: #f8a5c2;">java.qyserver.top</i></p>
-                <p>📱 基岩版地址：<i style="color: #f8a5c2;">javabe.qyserver.top</i><br>🔌端口：默认</p>
-                <p>📌支持版本：</p>
-                <p>• Java版：1.8 - 1.26.x (推荐 1.21.8)<br>• 基岩版：1.21.130-26.20</p>
+            <div class="popup-message" id="dynamicPopupBody">
+                <!-- 动态内容渲染区域 -->
             </div>
             <div class="popup-footer">
                 <label class="popup-checkbox">
@@ -1206,41 +1177,69 @@
 
         // 页面加载时的弹窗、图片绑定等
         document.addEventListener('DOMContentLoaded', function () {
-            // 公告弹窗逻辑
-            if (localStorage.getItem('dontShowPopu20260625') !== 'true') {
-                setTimeout(function () {
-                    const po = document.getElementById('popupOverlay');
-                    if (po) {
-                        po.style.display = 'flex';
-                        document.body.classList.add('no-scroll');
+            
+            // 【核心改造：动态获取弹窗数据机制】
+            // 通过请求加时间戳，彻底干掉本地和 CDN 的 JSON 缓存
+            fetch('https://nginx-termux.qyserver.top/Configs/dontShowPopup.json?t=' + new Date().getTime())
+                .then(res => {
+                    if(!res.ok) throw new Error('网络请求失败');
+                    return res.json();
+                })
+                .then(config => {
+                    const currentVersion = config.popupVersion || '20260625';
+                    const storageKey = 'dontShowPopup_' + currentVersion;
+
+                    // 1. 先把动态内容和标题注入到弹窗的 DOM 中
+                    document.getElementById('dynamicPopupTitle').innerHTML = config.title;
+                    document.getElementById('dynamicPopupBody').innerHTML = config.content;
+                    if(config.buttonText) {
+                        document.getElementById('popupConfirm').innerText = config.buttonText;
                     }
-                }, 2000);
-            }
 
-            document.getElementById('popupConfirm').addEventListener('click', function () {
-                if (document.getElementById('dontShowAgain').checked) {
-                    localStorage.setItem('dontShowPopu20260625', 'true');
-                }
-                const po = document.getElementById('popupOverlay');
-                if (po) po.style.display = 'none';
-                document.body.classList.remove('no-scroll');
-            });
+                    // 2. 绑定弹窗内动态生成图片的放大事件
+                    const popupMainImg = document.querySelector('#popupOverlay .popup-image img');
+                    if (popupMainImg) {
+                        popupMainImg.style.cursor = 'pointer';
+                        popupMainImg.addEventListener('click', function () {
+                            handleImageClick(this.src);
+                        });
+                    }
 
+                    // 3. 判断当前版本号本地有没有看守过，如果没有，2 秒后弹出
+                    if (localStorage.getItem(storageKey) !== 'true') {
+                        setTimeout(function () {
+                            const po = document.getElementById('popupOverlay');
+                            if (po) {
+                                po.style.display = 'flex';
+                                document.body.classList.add('no-scroll');
+                            }
+                        }, 2000);
+                    }
+
+                    // 4. “知道了” 按钮点击逻辑：根据当前配置的版本号锁死
+                    document.getElementById('popupConfirm').onclick = function () {
+                        if (document.getElementById('dontShowAgain').checked) {
+                            localStorage.setItem(storageKey, 'true');
+                        }
+                        const po = document.getElementById('popupOverlay');
+                        if (po) po.style.display = 'none';
+                        document.body.classList.remove('no-scroll');
+                    };
+                })
+                .catch(err => {
+                    console.error("加载弹窗公告配置失败: ", err);
+                    // 如果读取 JSON 挂了，降级隐藏弹窗，不卡死页面
+                    const po = document.getElementById('popupOverlay');
+                    if (po) po.style.display = 'none';
+                });
+
+            // 点击遮罩层关闭弹窗
             document.getElementById('popupOverlay').addEventListener('click', function (e) {
                 if (e.target === this) {
                     this.style.display = 'none';
                     document.body.classList.remove('no-scroll');
                 }
             });
-
-            // 弹窗内图片放大
-            const popupMainImg = document.querySelector('#popupOverlay .popup-image img');
-            if (popupMainImg) {
-                popupMainImg.style.cursor = 'pointer';
-                popupMainImg.addEventListener('click', function () {
-                    handleImageClick(this.src);
-                });
-            }
 
             // 为页面主要内容图片绑定放大点击事件（排除轮播中被链接包裹的图片）
             document.querySelectorAll('#content img, .content-image img, .popup-image img').forEach(img => {
