@@ -98,6 +98,25 @@
             background: rgba(255, 255, 255, 1);
         }
 
+        .ai-hint {
+            text-align: center;
+            margin-top: 6px;
+            font-size: 0.95rem;
+            color: #555;
+            letter-spacing: 0.3px;
+        }
+        .ai-hint a {
+            color: #2d8cf0;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px dashed rgba(45, 140, 240, 0.3);
+            transition: all 0.2s;
+        }
+        .ai-hint a:hover {
+            color: #f8a5c2;
+            border-bottom-color: #f8a5c2;
+        }
+
         /* 问题列表样式 */
         #problem-list {
             list-style: none;
@@ -262,6 +281,10 @@
             </div>
 
             <ul id="problem-list"></ul>
+            
+            <div class="ai-hint">
+                没找到问题？<a href="/tools/ai">点我去询问AI</a>
+            </div>
         </div>
     </section>
 
