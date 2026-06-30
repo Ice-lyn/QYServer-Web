@@ -40,16 +40,20 @@ function loadChangelog() {
             }
 
             list.innerHTML = data.map(item => {
-                let html = item.content
+                let content = item.content
+                content = typeof content === "string"
+                    ? content
+                    : content.join("\n");
+                let html = content
                     .replace(/\n/g, '<br>')
                     .replace(/&lt;img(.*?)&gt;/g, '<img$1>');
 
                 return `
-          <div class="changelog-item">
-            <div class="changelog-date">${item.date}</div>
-            <div class="changelog-title">${item.title}</div>
-            <div class="changelog-content">${html}</div>
-          </div>`;
+                    <div class="changelog-item">
+                        <div class="changelog-date">${item.date}</div>
+                        <div class="changelog-title">${item.title}</div>
+                        <div class="changelog-content">${html}</div>
+                    </div>`;
             }).join('');
 
             // 注入后绑定图片放大
