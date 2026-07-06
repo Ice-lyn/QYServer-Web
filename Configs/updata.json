@@ -1,5 +1,15 @@
 [
   {
+    "date": "2026-07-06",
+    "title": "=== 小更新日志 ===",
+    "content": "[+] 添加锁门功能\n \n## 用法&说明\n- 手持钟潜行点击门即可上锁\n- 只能在领地内使用\n \n# 源码实现\n<a href=\"https://github.com/Ice-rink/QYServer/commit/67cfa89bed8a92472107bc7d087e370ef3a7c47c\"><p5>查看源码实现 (Github)</p5></a>"
+  },
+  {
+    "date": "2026-07-05",
+    "title": "=== 小更新日志 ===",
+    "content": "[+] 夏季放水功能\n \n## 用法&说明\n- 在下界使用可以使用水桶放出水\n- 只能使用水桶 鱼桶什么的都不行\n- 只能在领地内使用\n \n# 源码实现\n<a href=\"https://github.com/Ice-rink/QYServer/commit/8f4ec0c737a520fbd5bf8dd12dff83a68d9459ba\"><p5>查看源码实现 (Github)</p5></a>"
+  },
+  {
     "date": "2026-07-1",
     "title": "=== 小更新日志 ===",
     "content": [
