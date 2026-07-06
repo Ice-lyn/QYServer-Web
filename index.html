@@ -1191,7 +1191,7 @@
 
                     // 1. 先把动态内容和标题注入到弹窗的 DOM 中
                     document.getElementById('dynamicPopupTitle').innerHTML = config.title;
-                    document.getElementById('dynamicPopupBody').innerHTML = config.content;
+                    document.getElementById('dynamicPopupBody').innerHTML = Array.isArray(config.content) ? config.content.join('') : config.content;
                     if(config.buttonText) {
                         document.getElementById('popupConfirm').innerText = config.buttonText;
                     }
