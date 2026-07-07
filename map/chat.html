@@ -4,11 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="referrer" content="no-referrer">
     <title>QYServer | 服务器聊天室</title>
     <script>
         localStorage.setItem('disablePageLoader', true);
-        window.__disablePageLoader = true;
     </script>
     <link rel="stylesheet" href="/lib/all.css">
     <script src="/lib/AllComponents.js"></script>
@@ -731,7 +729,8 @@
                     const res = await fetch('https://map.qyserver.top/api/login', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ username, password })
+                        body: JSON.stringify({ username, password }),
+                        credentials: 'include'
                     });
                     const data = await res.json();
                     if (data.code === 0) {
@@ -812,7 +811,8 @@
                     const res = await fetch('https://map.qyserver.top/api/chat/send', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ msg })
+                        body: JSON.stringify({ msg }),
+                        credentials: 'include'
                     });
                     const data = await res.json();
                     if (data.code !== 0) {
