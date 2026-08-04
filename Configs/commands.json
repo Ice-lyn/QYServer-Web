@@ -98,6 +98,24 @@
                     "icon": "fa-coins",
                     "description": "打开连锁菜单",
                     "usage": "挖木头一个一金币\n挖矿一个两金币"
+                },
+                {
+                    "name": "/dglab on",
+                    "icon": "fa-coins",
+                    "description": "连接到DGLab设备",
+                    "usage": "连接地址可重复使用"
+                },
+                {
+                    "name": "/dglab off",
+                    "icon": "fa-coins",
+                    "description": "关闭DGLab连接",
+                    "usage": null
+                },
+                {
+                    "name": "/onmode voteweather",
+                    "icon": "fa-coins",
+                    "description": "天气切换投票",
+                    "usage": null
                 }
             ]
         }
