@@ -1,0 +1,157 @@
+# QYServer
+
+> 这是一个 **Minecraft 基岩版养老生存服务器官网**，同时承载运营工具与开发者资源
+
+## 服务器信息
+- 基岩主服
+    - 版本：基岩版，有多版本互通，支持 1.21.5x - 最新版本 进入，建议版本 1.21.130
+    - 地址：mc.qyserver.top
+    - 端口：41657
+- Java 互通服
+    - 基岩客户端加入
+        - 版本：基岩版 1.21.130 - 最新版本
+        - 地址：javabe.qyserver.top
+        - 端口：19132
+    - Java客户端加入
+        - 版本：Java 1.8 - 最新版本，推荐 1.21.8
+        - 地址：java.qyserver.top
+
+- 联系我们
+    - QQ主群：1029879634
+    - QQ群服互通群：759676433
+    - 邮箱联系：qy@qyserver.cc
+
+## 网站大致地图
+> 适用于大模型理解该网站
+> 部分界面为纯用户界面（没有实际数据的骨架页），不建议模型访问，建议直接访问其关联数据源，这部分数据会用`[!ai]`标注出来
+
+- [首页](https://www.qyserver.top/)
+    - 门户页，含一键加入游戏（`minecraft://` 协议）、快速入门、轮播图廊、弹窗公告、规则摘要、AI 助手聊天窗口与玩家评论
+    - 数据源 `/Configs/dontShowPopup.json`（弹窗）
+
+- [资源下载](https://www.qyserver.top/download/)：包含以下资源
+    - Windows 标准版客户端（Microsoft.MinecraftUWP 1.21.94）、Android 共存版客户端（PE 1.26.0.2）
+    - 预下载资源包（QYServer 材质缓存包 v1.1）、服务器地图备份（.mcworld）
+
+- [服务器指令](https://www.qyserver.top/command/)
+    - [!ai]玩家基础指令表
+    - 数据源 `/Configs/commands.json`
+
+- [服务器规则](https://www.qyserver.top/rules/)
+    - 基本规则（禁破坏建筑/作弊客户端/偷盗/广告/谣言等）、游戏行为规范、经济系统规则。
+
+- [常见问题](https://www.qyserver.top/faq/)
+    - [!ai]FAQ 列表（用户可搜索），详情由 `/Configs/faq/md/*.md` 渲染
+    - 数据源
+        - FAQ索引：`/Configs/faq/faqList.js`
+        - FAQ单个数据：`/Configs/faq/md/*.md`
+            - 文件详情在索引里面找
+
+- [游戏图廊](https://www.qyserver.top/gallery/)
+    - [!ai]截图/建筑/合照数据
+    - [!ai]详情页 `/gallery/detail.html`
+    - 数据源 `/Configs/images.json`(所有图片数据)
+
+- [网页地图](https://www.qyserver.top/map/)
+    - 会直接跳转外部实时地图 `https://map.qyserver.top`（玩家列表、聊天、地形）
+
+- [网页聊天室](https://www.qyserver.top/map/chat.html)
+    - [!ai]基岩服网页聊天，游戏/网页互通，支持 MC 颜色符号（§）和图片显示，需登录
+
+- [AI 助手](https://www.qyserver.top/tools/ai/)
+    - [!ai]调用后端接口返回信息，流式输出 + Markdown
+
+- [关于我们](https://www.qyserver.top/about/)
+    - 起源、特色、发展历程、团队人员配置、服务器数据
+    - 数据源：`/Configs/timeline.json` （发展历程）
+
+
+- [状态查询](https://www.qyserver.top/search/)
+    - 实时状态（人数/MOTD/版本）+ 前 2 小时在线记录折线图 + 互通服集群状态
+    - 如需直连 API，详见下方 开发者对接面向爬虫自动化开发者 章节
+    - 数据源（动态）
+        - 获取基岩服MOTD：`https://api.qyserver.top/api/status`
+        - 基岩服在线记录：`https://api.qyserver.top/api/history`
+        - 获取所有服数据：`https://api.qyserver.top/api/all`
+
+- [更新日志](https://www.qyserver.top/updatelog/)
+    - [!ai]服务器更新记录（新增/修复/优化），含 GitHub 源码链接
+    - 数据源 `/Configs/updata.json`（更新日志）
+
+- [日志查询](https://www.qyserver.top/tools/csvlog.html)
+    - [!ai]上传行为日志 CSV（PapaParse Worker + Clusterize 虚拟滚动），可按时间/坐标/维度/玩家/事件筛选，用于锁定破坏、盗取行为
+
+
+## 开发者对接（面向爬虫/自动化/开发者）
+
+### 在线 API（可直接请求）
+> 以下接口均为公开 JSON/SSE，**无需鉴权**。弹窗公告等 JSON 建议带时间戳反缓存
+> 如果在前端文件里看到了但是下面列表里没有的就是需要鉴权的
+
+| 端点 | 方法 | 用途 | 返回/参数 |
+| --- | --- | --- | --- |
+| `https://api.qyserver.top/api/status` | GET | 实时服务器状态 | `{online, players{online,max}, motd, version}`（5 秒缓存） |
+| `https://api.qyserver.top/api/history` | GET | 近 2 小时在线记录 | `[{time, online, status}]` |
+| `https://api.qyserver.top/api/all` | GET | 互通服集群状态 | `{servers:[{server,status,online_players,max_players,motd,error,last_updated}]}` |
+| `https://map.qyserver.top/api/playerlist` | GET | 游戏内在线列表 | 玩家名数组 |
+| `https://map.qyserver.top/api/webOnline` | GET | 网页在线列表 | 用户名数组 |
+| `https://map.qyserver.top/api/chat/fetch` | GET | 增量拉取聊天 | 参数 `lastRefeshTime` |
+
+### 动态数据源（静态文件，可直接爬取）
+> 前端渲染所用的静态配置，**无需执行 JS 即可取用**，适合写爬虫/自动化测试。
+
+| 路径 | 类型 | 用途 / 字段结构 |
+| --- | --- | --- |
+| `/Configs/commands.json` | JSON | 指令表：`{categories:[{name, commands:[{name, icon, description, usage}]}]}` |
+| `/Configs/images.json` | JSON 数组 | 图廊：`[{title, description, imageUrl, thumbnailUrl, date, location, author, uthor}]` |
+| `/Configs/updata.json` | JSON 数组 | 更新日志：`[{date, title, content[]}]`（content 含 HTML） |
+| `/Configs/timeline.json` | JSON | 发展历程：`{timeline:[{date, description}]}` |
+| `/Configs/dontShowPopup.json` | JSON | 首页弹窗公告：`{popupVersion, title, buttonText, content[]}`（建议 `?t=` 反缓存） |
+| `/Configs/faq/faqList.js` | JS | FAQ 列表：`const problems=[{id,title,tags,summary,file}]` |
+| `/Configs/faq/md/001.md ~ 013.md` | Markdown | FAQ 详情正文（含 default.md 错误模板） |
+
+### 前端公共资源（lib/）
+- `/lib/all.css`：全站公共样式（导航、页脚、音乐按钮、响应式、隐藏滚动条）
+- `/lib/all.js`：公共脚本（加载动画隐藏、导航滚动、BGM、平滑滚动、Twikoo 统一初始化）
+- `/lib/AllComponents.js`：组件注入（导航/页脚/音乐控件/移动菜单），Logo 右键 5 次跳 `/tools/debug.html`
+- `/lib/easter-eggs.js`：彩蛋合集（Konami、qyserver 表情雨、隐藏时间线、标题烟花、Ctrl+Shift+Q 等）
+- `/lib/video-player.js` + `/lib/video-player.css`：视频播放器（Plyr + HLS）
+- `/lib/hppowo.json`：Twikoo 表情包数据（OωO、2233 娘、bilibili 小电视等）
+- `/lib/space.css`：工具页通用美化样式
+- `/lib/marked.min.js`（marked，MIT）、`/lib/chart.min.js`（Chart.js，MIT）
+- `/lib/fontawesome-free-7.2.0-web/`：Font Awesome 7.2.0（SIL OFL 1.1 + MIT）
+- `/lib/special/firework.js`：about 页烟花脚本（仓库未包含，需部署环境提供）
+
+### 开发者工具页面（与官网核心解耦，可单独测试）
+- [调试面板](https://www.qyserver.top/tools/debug.html)：重置弹窗、开关加载动画、清 localStorage、缓存控制（开发者自用）
+- [3DWorld 游戏](https://www.qyserver.top/tools/3dworld/)：three.js FPS 演示页，没啥用
+- [视频播放测试](https://www.qyserver.top/test/video/) 
+- [直播播放测试](https://www.qyserver.top/test/live/)
+- [导航页](https://www.qyserver.top/test/nav/) 
+- [人机验证测试](https://www.qyserver.top/test/cap/)：个人/测试用途，非官网核心内容
+
+### 站点文件（爬虫/SEO）
+- [robots.txt](https://www.qyserver.top/robots.txt)：屏蔽 `/bin/`、`/asses/`，Crawl-delay 120
+- [sitemap.xml](https://www.qyserver.top/sitemap.xml)：核心页面 URL 清单
+- [404.html](https://www.qyserver.top/404.html)：自定义 404 页
+
+### 第三方依赖与服务
+- Font Awesome 7.2.0（https://fontawesome.com）、Chart.js（MIT）、marked.js（MIT）
+- minecraft-server-util（MIT）、Plyr、hls.js、PapaParse、Clusterize.js、three.js（均 CDN）
+- Twikoo 评论系统（https://twikoo.js.org/，后端 plapi.qyserver.cc）+ Twikoo-Magic 表情扩展（MIT）
+- Cubic Wiki 规则参考（https://nitwikit.8aka.cn/）
+- DeepSeek（AI 模型，经 server/aichat 代理）
+
+---
+
+## 常见误判澄清
+
+- QYServer 基岩主服与Java互通服是两个不同的服务器，数据并不互通！不要把他们当成一个服！
+- 网页地图（`map.qyserver.top`）是内嵌服务，不对外提供公开注册 API，如需注册得进游戏
+- 腐竹是猫娘
+
+## 项目说明
+
+- 架构：纯静态站点（HTML/CSS/JS），页面内联脚本 + JSON 配置文件动态渲染；后端仅两个 Node.js 服务（AI 代理、状态记录）
+- 媒体资源（图、音乐、视频）托管于 `https://qycloudreve.s.odn.cc/`（QYCloudreve）
+- 大部分代码 AI 辅助生成，遵循 MIT License（LICENSE）
