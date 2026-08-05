@@ -2,13 +2,14 @@
 <html lang="zh-CN">
 
 <head>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QYServer | 指令</title>
+    <link rel="alternate" type="application/json" href="/Configs/commands.json" title="QYServer 服务器指令元数据" />
     <link rel="stylesheet" href="/lib/all.css">
     <script src="/lib/AllComponents.js"></script>
-    <link rel="icon" href="/favicon.ico"
-        type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <style>
         /* 内容区域 */
         #content {
@@ -205,8 +206,6 @@
             background-color: #f78fb3;
         }
 
-        
-
         .command-container {
             max-width: 900px;
             margin: 0 auto;
@@ -296,15 +295,15 @@
 
         <script>
             // 加载指令配置并渲染
-                async function loadCommands() {
-                    try {
-                        const response = await fetch('/Configs/commands.json');
-                        const data = await response.json();
-                        const container = document.querySelector('.command-container');
+            async function loadCommands() {
+                try {
+                    const response = await fetch('/Configs/commands.json');
+                    const data = await response.json();
+                    const container = document.querySelector('.command-container');
 
-                        if (!container) return;
+                    if (!container) return;
 
-                        container.innerHTML = data.categories.map(category => `
+                    container.innerHTML = data.categories.map(category => `
                             <div class="command-category">
                                 <h3>${escapeHtml(category.name)}</h3>
                                 ${category.commands.map(cmd => `
@@ -321,22 +320,22 @@
                                 `).join('')}
                             </div>
                         `).join('');
-                    } catch (error) {
-                        console.error('加载指令列表失败:', error);
-                    }
+                } catch (error) {
+                    console.error('加载指令列表失败:', error);
                 }
+            }
 
-                function escapeHtml(str) {
-                    if (!str) return '';
-                    return str.replace(/[&<>]/g, function (m) {
-                        if (m === '&') return '&amp;';
-                        if (m === '<') return '&lt;';
-                        if (m === '>') return '&gt;';
-                        return m;
-                    });
-                }
+            function escapeHtml(str) {
+                if (!str) return '';
+                return str.replace(/[&<>]/g, function (m) {
+                    if (m === '&') return '&amp;';
+                    if (m === '<') return '&lt;';
+                    if (m === '>') return '&gt;';
+                    return m;
+                });
+            }
 
-                document.addEventListener('DOMContentLoaded', loadCommands);
+            document.addEventListener('DOMContentLoaded', loadCommands);
         </script>
 
         <script src="/lib/all.js"></script>
