@@ -5,8 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QYServer | AI 对话</title>
-    <link rel="icon" href="/favicon.ico"
-        type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="/lib/all.css">
     <script src="/lib/AllComponents.js"></script>
     <style>
@@ -134,6 +133,19 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+        }
+
+        /* 占位容器：flex 居中，自动撑满 messages 区域 */
+        .empty-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            /* 占满 messages 的全部空间 */
+            user-select: none;
+            pointer-events: none;
+            /* 避免干扰点击 */
         }
 
         .msg {
@@ -305,7 +317,12 @@
             </div>
             <div class="chat-window">
                 <!-- 🟢 消息区 -->
-                <div class="messages" id="messages"></div>
+                <div class="messages" id="messages">
+                    <div class="empty-placeholder" id="emptyPlaceholder">
+                        <i class="fas fa-robot" style="font-size: 48px; margin-bottom: 12px; color: #ccc;"></i>
+                        <span style="color: #aaa; font-size: 16px;">今天有什么可以帮到你？owo</span>
+                    </div>
+                </div>
                 <!-- 🟢 输入区固定在底部 -->
                 <div class="input-area">
                     <input id="prompt" type="text" placeholder="输入你的问题，按回车或点击发送" />

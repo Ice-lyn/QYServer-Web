@@ -1,20 +1,26 @@
-// 前端 AI 聊天功能 (修复版)
+// 前端 AI 聊天功能 (完整版)
 (function () {
     'use strict';
 
-    const is_debug = true; // 可以继续用 debug 模式，但逻辑已修复
+    // ==================== 功能开关 ====================
+    const ENABLE_LOCAL_STORAGE = true;   // 是否启用本地存储（true=启用，false=禁用）
+    const STORAGE_KEY = 'ai_chat_history';
+    const is_debug = true;               // 是否显示调试信息
 
+    // ==================== 配置 ====================
     const config = {
         apiUrl: 'https://api.qyserver.top/api/ai/stream',
-        // apiUrl: 'http://localhost:3001/api/ai/stream',
+        // apiUrl: 'http://localhost:3001/api/ai/stream',  // 本地测试用
         maxHistoryChars: 2000,
         timeout: 60000,
     };
 
+    // ==================== DOM 引用 ====================
     const messagesEl = document.getElementById('messages');
     const promptEl = document.getElementById('prompt');
     const sendBtn = document.getElementById('sendBtn');
 
+    // ==================== 状态 ====================
     let messageHistory = [];
 
     const tokenStats = {
@@ -35,7 +41,63 @@
         }
     };
 
+    // ==================== 本地存储管理 ====================
+    function saveHistoryToLocal() {
+        if (!ENABLE_LOCAL_STORAGE) return;
+        try {
+            const data = {
+                history: messageHistory,
+                timestamp: Date.now()
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        } catch (e) {
+            console.warn('保存聊天记录失败:', e);
+        }
+    }
+
+    function loadHistoryFromLocal() {
+        if (!ENABLE_LOCAL_STORAGE) return false;
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return false;
+            const data = JSON.parse(raw);
+            if (Array.isArray(data.history)) {
+                messageHistory = data.history;
+                return true;
+            }
+            return false;
+        } catch (e) {
+            console.warn('读取聊天记录失败:', e);
+            return false;
+        }
+    }
+
+    function clearLocalHistory() {
+        if (!ENABLE_LOCAL_STORAGE) return;
+        try {
+            localStorage.removeItem(STORAGE_KEY);
+        } catch (e) { }
+    }
+
+    // ==================== UI 辅助 ====================
+    function getPlaceholder() {
+        return document.getElementById('emptyPlaceholder');
+    }
+
+    function hidePlaceholder() {
+        const ph = getPlaceholder();
+        if (ph) ph.style.display = 'none';
+    }
+
+    function showPlaceholder() {
+        const ph = getPlaceholder();
+        if (ph) ph.style.display = '';
+    }
+
     function appendMessage(text, role) {
+        // 隐藏占位（有消息时）
+        hidePlaceholder();
+
         const wrapper = document.createElement('div');
         wrapper.style.display = 'flex';
         wrapper.style.justifyContent = role === 'user' ? 'flex-end' : 'flex-start';
@@ -58,7 +120,7 @@
         "深度烧烤中...",
         "少女祈祷中..."
     ];
-    
+
     function showThinking() {
         const wrapper = document.createElement('div');
         wrapper.style.display = 'flex';
@@ -91,6 +153,7 @@
         }
     }
 
+    // ==================== 流式请求 ====================
     async function* streamFromBackend(messages) {
         const payload = { messages: messages };
         const response = await fetch(config.apiUrl, {
@@ -126,13 +189,32 @@
         }
     }
 
-    // ==================== 主流程 ====================
+    // ==================== 清空历史（暴露） ====================
+    function clearHistory() {
+        messageHistory = [];
+        clearLocalHistory();
+
+        // 移除所有消息元素（保留占位）
+        const msgs = messagesEl.querySelectorAll('.msg');
+        msgs.forEach(el => el.remove());
+
+        // 移除可能存在的 debug 信息
+        const debugEls = messagesEl.querySelectorAll('details, .token-info');
+        debugEls.forEach(el => el.remove());
+
+        // 恢复占位
+        showPlaceholder();
+    }
+
+    // ==================== 主发送逻辑 ====================
     async function sendMessage(userText) {
         if (!userText) return;
 
         appendMessage(userText, 'user');
         clearInput();
         messageHistory.push({ role: 'user', content: userText });
+        // 保存用户消息（实时保存）
+        saveHistoryToLocal();
 
         const thinkingWrapper = showThinking();
         tokenStats.reset();
@@ -200,14 +282,13 @@
 
                 // 🟢 解析后端推送的自定义事件
                 if (chunk.type === 'status') {
-                    // 直接在后端拼好的灰色提示文字，原样显示
                     const statusWrapper = document.createElement('div');
                     statusWrapper.style.display = 'flex';
                     statusWrapper.style.justifyContent = 'flex-start';
                     statusWrapper.style.marginTop = '2px';
                     const statusDiv = document.createElement('div');
-                    statusDiv.style.cssText = 'color:#999;font-size:11px;white-space: pre-wrap;'; // 🟢 保留换行
-                    statusDiv.textContent = chunk.text; // 🟢 直接显示后端传来的文字
+                    statusDiv.style.cssText = 'color:#999;font-size:11px;white-space: pre-wrap;';
+                    statusDiv.textContent = chunk.text;
                     statusWrapper.appendChild(statusDiv);
                     messagesEl.appendChild(statusWrapper);
                     messagesEl.scrollTop = messagesEl.scrollHeight;
@@ -216,7 +297,6 @@
 
                 const delta = chunk.choices?.[0]?.delta;
                 if (delta?.content) {
-                    // 🟢 收到第一个字时，移除"思考中..."提示
                     if (!finalReply) {
                         removeElement(thinkingWrapper);
                     }
@@ -231,8 +311,6 @@
                 }
             }
 
-            // 🟢 如果循环结束也没有任何回复，也要移除"思考中..."
-            // 但如果已经被移除了，再移除一次也没关系
             removeElement(thinkingWrapper);
 
             if (finalReply) finalRender(finalReply);
@@ -241,18 +319,17 @@
             if (finalReply) {
                 messageHistory.push({ role: 'assistant', content: finalReply });
                 trimHistory(messageHistory, config.maxHistoryChars);
+                // 保存完整对话（包含回复）
+                saveHistoryToLocal();
             }
 
-            // 🟢 确保在AI消息容器创建后才显示debug信息
-            if (is_debug && rawChunks.length > 0) {
-                // 如果没有任何回复，debug信息就没有容身之处，直接不显示
-                if (finalReply) {
-                    appendDebugInfo(rawChunks);
-                }
+            if (is_debug && rawChunks.length > 0 && finalReply) {
+                appendDebugInfo(rawChunks);
             }
 
             if (tokenInfoText) {
                 const tokenDiv = document.createElement('div');
+                tokenDiv.className = 'token-info';
                 tokenDiv.style.cssText = 'font-size:10px;color:#999;margin-top:2px;margin-left:4px;';
                 tokenDiv.textContent = tokenInfoText;
                 const lastChild = messagesEl.lastElementChild;
@@ -262,20 +339,51 @@
             }
 
         } catch (err) {
-            // 🟢 发生错误，也要移除"思考中..."
             removeElement(thinkingWrapper);
             appendMessage('请求失败：' + err.message, 'bot');
             console.error('AI 请求错误:', err);
         }
     }
 
+    // ==================== 初始化（恢复历史） ====================
+    function init() {
+        const hasHistory = loadHistoryFromLocal();
+        if (hasHistory && messageHistory.length > 0) {
+            // 还原消息到界面
+            messageHistory.forEach(msg => {
+                appendMessage(msg.content, msg.role);
+            });
+            // 如果有消息，隐藏占位（已由 appendMessage 自动隐藏）
+            // 但是 appendMessage 是在循环中调用的，第一次调用就会隐藏占位，所以没问题。
+        } else {
+            // 无历史，确保占位显示
+            showPlaceholder();
+        }
+    }
+
+    // ==================== 事件绑定 ====================
     sendBtn.addEventListener('click', () => sendMessage(getInputValue()));
     promptEl.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(getInputValue()); });
 
+    // ==================== 暴露 API ====================
     window.AiChat = {
         sendMessage,
-        clearHistory: () => { messageHistory = []; },
+        clearHistory,
         getHistory: () => messageHistory,
         getTokenStats: () => tokenStats,
+        setEnabled: (enabled) => {
+            // 允许外部动态开关（可选）
+            // 但这里不直接修改 ENABLE_LOCAL_STORAGE，因为它是 const
+            // 可改为 let，但为简单起见，不提供动态修改
+            console.log('本地存储状态:', ENABLE_LOCAL_STORAGE ? '启用' : '禁用');
+        }
     };
+
+    // ==================== 启动 ====================
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+
 })();
