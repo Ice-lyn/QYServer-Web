@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="QYServer 全站导航，快速访问下载、查询、地图、更新日志、图廊等所有板块">
+    <meta name="keywords" content="QYServer,导航,站点地图,我的世界,基岩版">
+    <title>QYServer | 导航</title>
+    <link rel="alternate" type="application/json" href="/Configs/nav.json" title="QYServer 站点导航元数据" />
+    <link rel="stylesheet" href="/lib/all.css">
+    <script>
+        window.__disablePageLoader = true;
+    </script>
+    <script src="/lib/AllComponents.js"></script>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <style>
+        /* 横幅区域 */
+        #banner {
+            background: linear-gradient(135deg, #f8a5c2 0%, #a56de2 100%);
+            background-size: cover;
+            background-position: center;
+            width: 100%;
+            height: 55vh;
+            min-height: 380px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banner-content {
+            position: relative;
+            z-index: 2;
+            padding: 0 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            text-align: center;
+            color: #fff;
+        }
+
+        .banner-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 120%;
+            background: url('https://qycloudreve.s.odn.cc/f/RZWHg/2025-08-25_16.33.51.webp') center/cover;
+            opacity: 0.12;
+            z-index: -1;
+        }
+
+        .banner-content h1 {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .banner-content p {
+            font-size: 1.3rem;
+            max-width: 700px;
+            line-height: 1.6;
+            margin: 0 auto;
+            opacity: 0.95;
+        }
+
+        /* 内容区域 */
+        #content {
+            background: #f5f5f5;
+            padding: 80px 0;
+            position: relative;
+            min-height: 60vh;
+        }
+
+        .content-box {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .nav-section {
+            margin-bottom: 55px;
+        }
+
+        .nav-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .nav-section h2 {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 8px;
+            position: relative;
+            padding-bottom: 12px;
+        }
+
+        .nav-section h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: #f8a5c2;
+            border-radius: 2px;
+        }
+
+        .nav-section .section-sub {
+            color: #999;
+            font-size: 1rem;
+            margin-bottom: 25px;
+        }
+
+        /* 导航卡片网格 */
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 22px;
+        }
+
+        .nav-card {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 15px;
+            padding: 22px 24px;
+            text-decoration: none;
+            color: #5F5F5F;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+        }
+
+        .nav-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 28px rgba(248, 165, 194, 0.28);
+            border-color: #f8a5c2;
+        }
+
+        .nav-card .icon {
+            flex: 0 0 54px;
+            width: 54px;
+            height: 54px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #f8a5c2 0%, #a56de2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 22px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-card:hover .icon {
+            transform: scale(1.08) rotate(-4deg);
+        }
+
+        .nav-card .meta {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .nav-card .meta .title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-card .meta .desc {
+            font-size: 0.9rem;
+            color: #999;
+            line-height: 1.45;
+        }
+
+        .nav-card .arrow {
+            color: #ccc;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-card:hover .arrow {
+            color: #f8a5c2;
+            transform: translateX(4px);
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .banner-content h1 {
+                font-size: 2.4rem;
+            }
+
+            .banner-content p {
+                font-size: 1.05rem;
+            }
+
+            #content {
+                padding: 50px 0;
+            }
+
+            .nav-section h2 {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 横幅 -->
+    <section id="banner">
+        <div class="banner-content">
+            <h1><i class="fas fa-compass"></i> 站点导航</h1>
+            <p>你可以在这里找到本网站所有页面的入口哦~</p>
+        </div>
+    </section>
+
+    <!-- 内容 -->
+    <section id="content">
+        <div class="content-box" id="nav-container"></div>
+    </section>
+
+    <script>
+        // 加载导航配置并渲染
+        async function loadNav() {
+            try {
+                const response = await fetch('/Configs/nav.json');
+                const data = await response.json();
+                const container = document.getElementById('nav-container');
+                
+                if (!container) return;
+
+                container.innerHTML = data.categories.map(cat => `
+                    <div class="nav-section">
+                        <h2>${escapeHtml(cat.name)}</h2>
+                        ${cat.subtitle ? `<p class="section-sub">${escapeHtml(cat.subtitle)}</p>` : ''}
+                        <div class="nav-grid">
+                            ${cat.items.map(item => `
+                                <a class="nav-card" href="${escapeHtml(item.url)}">
+                                    <div class="icon"><i class="fas ${escapeHtml(item.icon)}"></i></div>
+                                    <div class="meta">
+                                        <div class="title">${escapeHtml(item.title)}</div>
+                                        <div class="desc">${escapeHtml(item.description)}</div>
+                                    </div>
+                                    <div class="arrow"><i class="fas fa-chevron-right"></i></div>
+                                </a>
+                            `).join('')}
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('加载导航配置失败:', error);
+            }
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>]/g, function (m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', loadNav);
+    </script>
+</body>
+
+</html>
