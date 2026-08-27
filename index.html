@@ -88,8 +88,7 @@
     </script>
     <link rel="stylesheet" href="/lib/all.css">
     <script src="/lib/AllComponents.js"></script>
-    <link rel="icon" href="favicon.ico"
-        type="image/x-icon">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
     <style>
         /* 横幅区域 */
         #banner {
@@ -495,7 +494,7 @@
             flex-direction: column;
             gap: 10px;
         }
-        
+
         /* 占位容器：flex 居中，自动撑满 messages 区域 */
         .empty-placeholder {
             display: flex;
@@ -594,7 +593,8 @@
         .messages {
             flex: 1;
             overflow-y: auto;
-            max-height: none; /* 清除原来的 max-height 限制 */
+            max-height: none;
+            /* 清除原来的 max-height 限制 */
             padding: 12px;
             display: flex;
             flex-direction: column;
@@ -1186,8 +1186,10 @@
                         <a href="/download/" class="quick-link"><i class="fas fa-download"></i> 文件下载</a>
                         <a href="/map/" class="quick-link"><i class="fas fa-map"></i> 网页地图</a>
                         <a href="/test/video/" class="quick-link"><i class="fas fa-file-video"></i>视频测试</a>
-                        <a href="mailto:qy@qyserver.cc" class="quick-link"><i class="fas fa-envelope"></i>联系邮箱：qy@qyserver.cc</a>
-                        <a href="https://space.qyserver.top/" class="quick-link"><i class="fas fa-laptop-code"></i>QySpace</a>
+                        <a href="mailto:qy@qyserver.cc" class="quick-link"><i
+                                class="fas fa-envelope"></i>联系邮箱：qy@qyserver.cc</a>
+                        <a href="https://space.qyserver.top/" class="quick-link"><i
+                                class="fas fa-laptop-code"></i>QySpace</a>
                     </p>
                 </div>
 
@@ -1207,7 +1209,8 @@
                         </div>
                         <div class="input-area">
                             <input id="prompt" type="text" placeholder="输入你的问题，按回车或点击发送" />
-                            <button id="sendBtn"><i class="fas fa-paper-plane"></i> 发送</button>
+                            <button id="sendBtn">发送</button>
+                            <button id="clearHistoryBtn" title="清除所有对话记录"></i> 清空</button>
                         </div>
                     </div>
                 </div>
@@ -1227,10 +1230,27 @@
     <!-- AI 聊天所需脚本 -->
     <script src="/lib/marked.min.js"></script>
     <script src="/tools/ai/ai.js"></script>
-    
+
     <!-- 引入 Twikoo JS 库 -->
     <script src="https://s4.zstatic.net/npm/twikoo@1.7.11/dist/twikoo.min.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const clearBtn = document.getElementById('clearHistoryBtn');
+            if (clearBtn) {
+                clearBtn.addEventListener('click', function () {
+                    // 确认操作，避免误触
+                    if (confirm('确定要清除所有聊天记录吗？')) {
+                        if (window.AiChat && typeof window.AiChat.clearHistory === 'function') {
+                            window.AiChat.clearHistory();
+                        } else {
+                            console.warn('AIChat 尚未加载，请稍后再试');
+                        }
+                    }
+                });
+            }
+        });
+
+
         // 图片放大辅助：在大屏幕显示模态，否则打开新标签
         function openImageModal(src) {
             if (document.querySelector('.image-modal-overlay')) return;
@@ -1274,12 +1294,12 @@
 
         // 页面加载时的弹窗、图片绑定等
         document.addEventListener('DOMContentLoaded', function () {
-            
+
             // 【核心改造：动态获取弹窗数据机制】
             // 通过请求加时间戳，彻底干掉本地和 CDN 的 JSON 缓存
             fetch('https://nginx-termux.qyserver.top/Configs/dontShowPopup.json?t=' + new Date().getTime())
                 .then(res => {
-                    if(!res.ok) throw new Error('网络请求失败');
+                    if (!res.ok) throw new Error('网络请求失败');
                     return res.json();
                 })
                 .then(config => {
@@ -1289,7 +1309,7 @@
                     // 1. 先把动态内容和标题注入到弹窗的 DOM 中
                     document.getElementById('dynamicPopupTitle').innerHTML = config.title;
                     document.getElementById('dynamicPopupBody').innerHTML = Array.isArray(config.content) ? config.content.join('') : config.content;
-                    if(config.buttonText) {
+                    if (config.buttonText) {
                         document.getElementById('popupConfirm').innerText = config.buttonText;
                     }
 
