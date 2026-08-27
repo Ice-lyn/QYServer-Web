@@ -9,6 +9,9 @@
     <title>QYServer | 导航</title>
     <link rel="alternate" type="application/json" href="/Configs/nav.json" title="QYServer 站点导航元数据" />
     <link rel="stylesheet" href="/lib/all.css">
+    <script>
+        window.__disablePageLoader = true;
+    </script>
     <script src="/lib/AllComponents.js"></script>
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <style>
@@ -230,7 +233,7 @@
                 const response = await fetch('/Configs/nav.json');
                 const data = await response.json();
                 const container = document.getElementById('nav-container');
-
+                
                 if (!container) return;
 
                 container.innerHTML = data.categories.map(cat => `
