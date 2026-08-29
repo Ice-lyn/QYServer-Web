@@ -195,6 +195,17 @@
             cursor: pointer;
         }
 
+        #clearHistoryBtn {
+            background: #ddd;
+            color: #555;
+            transition: background 0.2s;
+        }
+
+        #clearHistoryBtn:hover {
+            background: #f8a5a5;
+            color: #fff;
+        }
+
         /* ===== 页脚样式（与 index.html 保持一致） ===== */
         #footer {
             background: #333;
@@ -307,26 +318,24 @@
     <!-- 固定背景层 -->
     <div class="bg-fixed" style="background-image: url('https://t.alcy.cc/pc');"></div>
 
-    <!-- AI 对话区域 -->
+    <!-- ===== AI 对话区域 ===== -->
     <section id="content">
         <div class="content-box">
             <h2>AI 助手</h2>
-            <!-- 新增警示条：内容仅供参考 -->
             <div class="ai-warning">
                 <i class="fas fa-exclamation-triangle"></i> 提示：AI回答由模型生成，内容仅供参考，请自行判断准确性。
             </div>
             <div class="chat-window">
-                <!-- 🟢 消息区 -->
                 <div class="messages" id="messages">
                     <div class="empty-placeholder" id="emptyPlaceholder">
                         <i class="fas fa-robot" style="font-size: 48px; margin-bottom: 12px; color: #ccc;"></i>
                         <span style="color: #aaa; font-size: 16px;">今天有什么可以帮到你？owo</span>
                     </div>
                 </div>
-                <!-- 🟢 输入区固定在底部 -->
                 <div class="input-area">
                     <input id="prompt" type="text" placeholder="输入你的问题，按回车或点击发送" />
                     <button id="sendBtn">发送</button>
+                    <button id="clearHistoryBtn" title="清除所有对话记录"></i> 清空</button>
                 </div>
             </div>
         </div>
@@ -338,6 +347,22 @@
 
     <!-- 导航栏滚动效果（参考 index.html） -->
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const clearBtn = document.getElementById('clearHistoryBtn');
+            if (clearBtn) {
+                clearBtn.addEventListener('click', function () {
+                    // 确认操作，避免误触
+                    if (confirm('确定要清除所有聊天记录吗？')) {
+                        if (window.AiChat && typeof window.AiChat.clearHistory === 'function') {
+                            window.AiChat.clearHistory();
+                        } else {
+                            console.warn('AiChat 尚未加载，请稍后再试');
+                        }
+                    }
+                });
+            }
+        });
+
         (function () {
             const menuBox = document.getElementById('menu-box');
 
