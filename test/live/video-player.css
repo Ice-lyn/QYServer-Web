@@ -2,7 +2,7 @@
 
 /* 全局body背景：使用固定背景图片，居中对齐，覆盖整个视口 */
 body {
-  background: url('https://qycloudreve.s.odn.cc/f/Qlrtk/2025-07-05_14.0lo5.40.webp') no-repeat center center fixed !important;
+  background: url('https://cloudreve.qyserver.top/f/Qlrtk/2025-07-05_14.0lo5.40.webp') no-repeat center center fixed !important;
   background-size: cover !important;
 }
 

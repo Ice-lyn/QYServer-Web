@@ -153,5 +153,5 @@
 ## 项目说明
 
 - 架构：纯静态站点（HTML/CSS/JS），页面内联脚本 + JSON 配置文件动态渲染；后端仅两个 Node.js 服务（AI 代理、状态记录）
-- 媒体资源（图、音乐、视频）托管于 `https://qycloudreve.s.odn.cc/`（QYCloudreve）
+- 媒体资源（图、音乐、视频）托管于 `https://cloudreve.qyserver.top/`（QYCloudreve）
 - 大部分代码 AI 辅助生成，遵循 MIT License（LICENSE）
