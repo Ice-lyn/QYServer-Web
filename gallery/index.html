@@ -139,6 +139,28 @@
             font-size: 1.1rem;
             text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
+
+        /* 新增投稿提示样式 */
+        .upload-tip {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 30px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            font-size: 1rem;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .upload-tip a {
+            color: #ffd700;
+            /* 金色突出 */
+            text-decoration: none;
+        }
+
+        .upload-tip a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 
@@ -150,6 +172,10 @@
             <div class="loading-placeholder" style="text-align:center;padding:40px;color:#999;width:100%;">
                 <i class="fas fa-spinner fa-pulse"></i> 构建回忆中...
             </div>
+        </div>
+        <!-- 新增投稿提示 -->
+        <div class="upload-tip">
+            也想让你的游戏截图上榜吗？将图片和相关信息发至<a href="mailto:qy@qyserver.cc">qy@qyserver.cc</a>邮箱就行啦~
         </div>
     </div>
 

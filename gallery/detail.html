@@ -2,15 +2,15 @@
 <html lang="zh-cn">
 
 <head>
-    <meta name=“robots”content=“noindex”>
+    <meta name="robots" content="noindex">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QYServer | 图片详情</title>
-    <link rel="icon" href="/favicon.ico"
-        type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="/lib/all.css">
     <script src="/lib/AllComponents.js"></script>
-    <script src="https://s4.zstatic.net/npm/twikoo@1.7.11/dist/twikoo.min.js"></script>
+    <script src="https://s4.zstatic.net/npm/twikoo@1.7.11/dist/twikoo.min.js">
+    </script>
     <style>
         body {
             margin: 0;
@@ -74,13 +74,97 @@
         .image-container {
             position: relative;
             margin-bottom: 30px;
+            min-height: 200px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
+        /* ===== 加载中占位样式（图片未注入时显示） ===== */
+        .image-loading {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 15px;
+            letter-spacing: 1px;
+            z-index: 2;
+            pointer-events: none;
+            /* 不阻挡点击 */
+            transition: opacity 0.4s ease;
+        }
+
+        .image-loading.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 42px;
+            height: 42px;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* 图片加载失败时的提示 */
+        .image-error-msg {
+            display: none;
+            color: #ffb3b3;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            text-align: center;
+        }
+
+        .image-loading.error .spinner {
+            border-top-color: #ff6b6b;
+            animation-play-state: paused;
+        }
+
+        .image-loading.error .loading-text {
+            display: none;
+        }
+
+        .image-loading.error .image-error-msg {
+            display: block;
+        }
+
+        /* ===== 主图片样式 ===== */
         .main-image {
             width: 100%;
             height: auto;
+            display: block;
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            cursor: zoom-in;
+            position: relative;
+            z-index: 1;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+
+        .main-image.loaded {
+            opacity: 1;
+        }
+
+        .main-image:not([src]),
+        .main-image[src=""] {
+            opacity: 0;
+            position: absolute;
         }
 
         .image-info {
@@ -138,6 +222,16 @@
             .image-title {
                 font-size: 20px;
             }
+
+            .image-container {
+                min-height: 160px;
+            }
+
+            .spinner {
+                width: 32px;
+                height: 32px;
+                border-width: 3px;
+            }
         }
 
         /* 放大模态样式 */
@@ -167,19 +261,22 @@
             cursor: zoom-out;
             transition: transform 0.25s ease;
         }
-
-        .main-image {
-            cursor: zoom-in;
-        }
     </style>
 </head>
 
 <body>
-    
+
     <a href="javascript:history.back()" class="back-button">返回</a>
 
     <div class="container">
         <div class="image-container">
+            <!-- 图片加载中占位层 -->
+            <div class="image-loading" id="imageLoading">
+                <div class="spinner"></div>
+                <span class="loading-text">图片加载中，请稍候…</span>
+                <span class="image-error-msg">⚠️ 图片加载失败，可能已被删除或链接失效</span>
+            </div>
+
             <img class="main-image" id="displayImage" src="" alt="详细图片">
         </div>
 
@@ -218,171 +315,222 @@
     <div id="zoomModal" class="zoom-modal" aria-hidden="true">
         <img id="zoomImg" src="" alt="">
     </div>
-    
+
     <script src="/lib/all.js"></script>
     <script>
-    window.__twikoo_custom_init = true; 
-    
-    // 获取URL参数
-    function getQueryParam(param) {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get(param);
-    }
+        window.__twikoo_custom_init = true;
 
-    // 评论提交标记（发布后自动刷新用）
-    (function () {
-        function markPosted() {
-            try { sessionStorage.setItem('twikoo.justPosted', String(Date.now())); } catch (e) { }
+        // 获取URL参数
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
         }
-        document.addEventListener('click', function (e) {
-            var t = e.target;
-            while (t && t !== document) {
+
+        // 评论提交标记（发布后自动刷新用）
+        (function () {
+            function markPosted() {
                 try {
-                    if (t.closest && t.closest('#tcomment')) {
-                        var text = (t.innerText || '').toLowerCase();
-                        var cls = (t.className || '').toLowerCase();
-                        if (/发布|提交|回复|发表评论|发送|发布评论|send|submit|post|publish/.test(text) || /btn|submit|send|publish|post|twikoo/.test(cls)) {
-                            markPosted();
-                            break;
-                        }
-                    }
-                } catch (err) { }
-                t = t.parentElement;
+                    sessionStorage.setItem('twikoo.justPosted', String(Date.now()));
+                } catch (e) { }
             }
-        }, true);
-        document.addEventListener('submit', function (e) {
-            try {
-                var f = e.target;
-                if (f && f.closest && f.closest('#tcomment')) markPosted();
-            } catch (err) { }
-        }, true);
-    })();
+            document.addEventListener('click', function (e) {
+                var t = e.target;
+                while (t && t !== document) {
+                    try {
+                        if (t.closest && t.closest('#tcomment')) {
+                            var text = (t.innerText || '').toLowerCase();
+                            var cls = (t.className || '').toLowerCase();
+                            if (/发布|提交|回复|发表评论|发送|发布评论|send|submit|post|publish/.test(text) || /btn|submit|send|publish|post|twikoo/
+                                .test(cls)) {
+                                markPosted();
+                                break;
+                            }
+                        }
+                    } catch (err) { }
+                    t = t.parentElement;
+                }
+            }, true);
+            document.addEventListener('submit', function (e) {
+                try {
+                    var f = e.target;
+                    if (f && f.closest && f.closest('#tcomment')) markPosted();
+                } catch (err) { }
+            }, true);
+        })();
 
-    // 等待DOM完全加载后统一执行
-    window.addEventListener('DOMContentLoaded', function () {
-        // 1. 填充页面基本内容
-        const imageUrl = getQueryParam('img');
-        const title = getQueryParam('title') || '未知标题';
-        const description = getQueryParam('desc') || '暂无描述';
-        const date = getQueryParam('date') || '未知';
-        const location = getQueryParam('loc') || '不愿透露';
-        const author = getQueryParam('author') || '匿名';
-        const uthor = getQueryParam('uthor') || '未知';
+        // 等待DOM完全加载后统一执行
+        window.addEventListener('DOMContentLoaded', function () {
+            // ========== 1. 填充页面基本内容 ==========
+            const imageUrlParam = getQueryParam('img');
+            const imageUrl = imageUrlParam ? decodeURIComponent(imageUrlParam) : '';
+            const title = getQueryParam('title') || '未知标题';
+            const description = getQueryParam('desc') || '暂无描述';
+            const date = getQueryParam('date') || '未知';
+            const location = getQueryParam('loc') || '不愿透露';
+            const author = getQueryParam('author') || '匿名';
+            const uthor = getQueryParam('uthor') || '未知';
 
-        document.getElementById('displayImage').src = decodeURIComponent(imageUrl || '');
-        document.getElementById('imageTitle').textContent = decodeURIComponent(title);
-        document.getElementById('imageDescription').textContent = decodeURIComponent(description);
-        document.getElementById('imageDate').textContent = decodeURIComponent(date);
-        document.getElementById('imageLocation').textContent = decodeURIComponent(location);
-        document.getElementById('imageAuthor').textContent = decodeURIComponent(author);
-        document.getElementById('imageUthor').textContent = decodeURIComponent(uthor);
+            document.getElementById('imageTitle').textContent = decodeURIComponent(title);
+            document.getElementById('imageDescription').textContent = decodeURIComponent(description);
+            document.getElementById('imageDate').textContent = decodeURIComponent(date);
+            document.getElementById('imageLocation').textContent = decodeURIComponent(location);
+            document.getElementById('imageAuthor').textContent = decodeURIComponent(author);
+            document.getElementById('imageUthor').textContent = decodeURIComponent(uthor);
 
-        // 2. 图片放大模态框逻辑
-        const displayImg = document.getElementById('displayImage');
-        const zoomModal = document.getElementById('zoomModal');
-        const zoomImg = document.getElementById('zoomImg');
-        if (displayImg) {
-            displayImg.addEventListener('click', function () {
-                if (!displayImg.src) return;
-                zoomImg.src = displayImg.src;
-                zoomModal.classList.add('open');
-                zoomModal.setAttribute('aria-hidden', 'false');
-                document.body.style.overflow = 'hidden';
-            });
-        }
-        zoomModal.addEventListener('click', function () {
-            zoomModal.classList.remove('open');
-            zoomModal.setAttribute('aria-hidden', 'true');
-            document.body.style.overflow = '';
-            zoomImg.src = '';
-        });
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape' && zoomModal.classList.contains('open')) {
+            const displayImg = document.getElementById('displayImage');
+            const loadingEl = document.getElementById('imageLoading');
+
+            // ========== 2. 图片加载状态管理 ==========
+            function showLoading() {
+                loadingEl.classList.remove('hidden', 'error');
+                displayImg.classList.remove('loaded');
+            }
+
+            function hideLoading() {
+                loadingEl.classList.add('hidden');
+                displayImg.classList.add('loaded');
+            }
+
+            function showError(message) {
+                loadingEl.classList.remove('hidden');
+                loadingEl.classList.add('error');
+                displayImg.classList.remove('loaded'); // 图片不显示
+                const errMsg = loadingEl.querySelector('.image-error-msg');
+                if (errMsg && message) errMsg.textContent = message;
+                const spinner = loadingEl.querySelector('.spinner');
+                if (spinner) spinner.style.display = 'none'; // 停止旋转动画
+            }
+
+            // 初始状态：显示加载提示（图片尚未注入）
+            showLoading();
+
+            if (imageUrl) {
+                // 设置 src 前先确保提示可见（防止外部修改）
+                showLoading();
+
+                // 处理缓存情况：如果图片已经加载完成，直接隐藏提示
+                if (displayImg.complete && displayImg.naturalWidth > 0) {
+                    hideLoading();
+                } else {
+                    displayImg.addEventListener('load', hideLoading, { once: true });
+                    displayImg.addEventListener('error', function () {
+                        showError('⚠️ 图片加载失败，可能已被删除或链接失效');
+                    }, { once: true });
+                }
+
+                // 设置 src 触发加载（必须在绑定事件之后，避免缓存导致事件错过）
+                displayImg.src = imageUrl;
+            } else {
+                // 未注入图片地址
+                showError('⚠️ 未找到图片，请通过正确的链接访问');
+            }
+
+            // ========== 3. 图片放大模态框逻辑 ==========
+            if (displayImg) {
+                displayImg.addEventListener('click', function () {
+                    if (!displayImg.src || !displayImg.classList.contains('loaded')) return;
+                    zoomImg.src = displayImg.src;
+                    zoomModal.classList.add('open');
+                    zoomModal.setAttribute('aria-hidden', 'false');
+                    document.body.style.overflow = 'hidden';
+                });
+            }
+
+            const zoomModal = document.getElementById('zoomModal');
+            const zoomImg = document.getElementById('zoomImg');
+
+            zoomModal.addEventListener('click', function () {
                 zoomModal.classList.remove('open');
                 zoomModal.setAttribute('aria-hidden', 'true');
                 document.body.style.overflow = '';
                 zoomImg.src = '';
-            }
-        });
+            });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && zoomModal.classList.contains('open')) {
+                    zoomModal.classList.remove('open');
+                    zoomModal.setAttribute('aria-hidden', 'true');
+                    document.body.style.overflow = '';
+                    zoomImg.src = '';
+                }
+            });
 
-        // 3. ========== Twikoo 评论隔离修复（核心） ==========
-        // 使用 setTimeout 给予浏览器 100ms 的缓冲时间，避开大型图片资源抢占主线程
-        setTimeout(function() {
-            if (window.__twikoo_initialized) return;
-            window.__twikoo_initialized = true;
+            // ========== 4. Twikoo 评论隔离修复（核心） ==========
+            setTimeout(function () {
+                if (window.__twikoo_initialized) return;
+                window.__twikoo_initialized = true;
 
-            // 【关键修改】：抛弃 encodeURIComponent，改用纯净的正则替换。
-            // 将 URL 中所有的特殊符号（包括冒号、斜杠、百分号等）全部替换为下划线。
-            // 这样既保证了每张图片路径的绝对唯一性，又保证了字符串是纯净的数字+字母+下划线，彻底防止 Vue 渲染崩溃。
-            const imgParam = getQueryParam('img');
-            const safeImageId = imgParam ? imgParam.replace(/[^a-zA-Z0-9]/g, '_') : 'fallback_path';
-            const uniquePath = '/gallery/detail/' + safeImageId;
+                const imgParamRaw = getQueryParam('img');
+                const safeImageId = imgParamRaw ? imgParamRaw.replace(/[^a-zA-Z0-9]/g, '_') :
+                    'fallback_path';
+                const uniquePath = '/gallery/detail/' + safeImageId;
 
-            function initTwikoo() {
-                twikoo.init({
-                    envId: 'https://plapi.qyserver.cc/',
-                    el: '#tcomment',
-                    lang: 'zh-CN',
-                    path: uniquePath, // 传入安全解析的路径
-                    placeholder: '来分享你对这张图片的看法吧！支持Markdown语法~ \n不显示评论请点击评论区的刷新按钮试试哦~',
-                    meta: [
-                        { name: '昵称', placeholder: '怎么称呼你？（必填）', required: true },
-                        { name: '邮箱', placeholder: '方便联系你（选填）', required: false },
-                        { name: '网站', placeholder: '你的个人主页（选填）', required: false }
-                    ],
-                    onCommentLoaded: function () {
-                        // 正常情况下，首次加载拿到数据后就会走到这里并直接显示
-                        console.log('Twikoo 评论渲染完成，当前隔离ID: ' + uniquePath);
-                    }
-                }).then(function () {
-                    console.log('Twikoo 初始化成功');
-                    // 原有的发布后自动刷新逻辑保留
-                    try {
-                        var justPosted = sessionStorage.getItem('twikoo.justPosted');
-                        if (justPosted && (Date.now() - parseInt(justPosted, 10) < 2 * 60 * 1000)) {
-                            var attempts = 0;
-                            var timer = setInterval(function () {
-                                attempts++;
-                                var container = document.getElementById('tcomment');
-                                if (!container) { clearInterval(timer); return; }
-                                var nodes = container.querySelectorAll('button, a, span, div');
-                                var clicked = false;
-                                for (var i = 0; i < nodes.length; i++) {
-                                    var n = nodes[i];
-                                    var txt = (n.innerText || '').trim();
-                                    if (/刷新|重新加载|加载更多|刷新评论|reload|refresh/i.test(txt)) {
-                                        try { n.click(); } catch (e) { }
-                                        clicked = true;
-                                        break;
-                                    }
-                                }
-                                if (clicked || attempts > 12) {
-                                    clearInterval(timer);
-                                    sessionStorage.removeItem('twikoo.justPosted');
-                                }
-                            }, 800);
+                function initTwikoo() {
+                    twikoo.init({
+                        envId: 'https://plapi.qyserver.cc/',
+                        el: '#tcomment',
+                        lang: 'zh-CN',
+                        path: uniquePath,
+                        placeholder: '来分享你对这张图片的看法吧！支持Markdown语法~ \n不显示评论请点击评论区的刷新按钮试试哦~',
+                        meta: [
+                            { name: '昵称', placeholder: '怎么称呼你？（必填）', required: true },
+                            { name: '邮箱', placeholder: '方便联系你（选填）', required: false },
+                            { name: '网站', placeholder: '你的个人主页（选填）', required: false }
+                        ],
+                        onCommentLoaded: function () {
+                            console.log('Twikoo 评论渲染完成，当前隔离ID: ' + uniquePath);
                         }
-                    } catch (e) { }
-                }).catch(function (err) {
-                    console.error('Twikoo 初始化失败:', err);
-                    var el = document.getElementById('tcomment');
-                    if (el) el.innerHTML = '<p style="color: #f8a5c2; text-align: center;">评论加载失败，请检查后端服务。</p>';
-                });
-            }
+                    }).then(function () {
+                        console.log('Twikoo 初始化成功');
+                        try {
+                            var justPosted = sessionStorage.getItem('twikoo.justPosted');
+                            if (justPosted && (Date.now() - parseInt(justPosted, 10) < 2 * 60 *
+                                1000)) {
+                                var attempts = 0;
+                                var timer = setInterval(function () {
+                                    attempts++;
+                                    var container = document.getElementById('tcomment');
+                                    if (!container) { clearInterval(timer); return; }
+                                    var nodes = container.querySelectorAll(
+                                        'button, a, span, div');
+                                    var clicked = false;
+                                    for (var i = 0; i < nodes.length; i++) {
+                                        var n = nodes[i];
+                                        var txt = (n.innerText || '').trim();
+                                        if (/刷新|重新加载|加载更多|刷新评论|reload|refresh/i
+                                            .test(txt)) {
+                                            try { n.click(); } catch (e) { }
+                                            clicked = true;
+                                            break;
+                                        }
+                                    }
+                                    if (clicked || attempts > 12) {
+                                        clearInterval(timer);
+                                        sessionStorage.removeItem(
+                                            'twikoo.justPosted');
+                                    }
+                                }, 800);
+                            }
+                        } catch (e) { }
+                    }).catch(function (err) {
+                        console.error('Twikoo 初始化失败:', err);
+                        var el = document.getElementById('tcomment');
+                        if (el) el.innerHTML =
+                            '<p style="color: #f8a5c2; text-align: center;">评论加载失败，请检查后端服务。</p>';
+                    });
+                }
 
-            // 确保 twikoo 库已经下载并挂载到 window 对象上后再执行初始化
-            if (typeof twikoo !== 'undefined') {
-                initTwikoo();
-            } else {
-                var check = setInterval(function () {
-                    if (typeof twikoo !== 'undefined') {
-                        clearInterval(check);
-                        initTwikoo();
-                    }
-                }, 100);
-            }
-        }, 100); 
-    });
+                if (typeof twikoo !== 'undefined') {
+                    initTwikoo();
+                } else {
+                    var check = setInterval(function () {
+                        if (typeof twikoo !== 'undefined') {
+                            clearInterval(check);
+                            initTwikoo();
+                        }
+                    }, 100);
+                }
+            }, 100);
+        });
     </script>
 </body>
 
