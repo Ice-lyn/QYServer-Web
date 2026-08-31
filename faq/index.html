@@ -280,7 +280,12 @@
                 <input type="text" id="search" placeholder="搜索问题..." />
             </div>
 
-            <ul id="problem-list"></ul>
+            <ul id="problem-list">
+                <!-- 静态加载提示，JS 渲染完成后会被替换 -->
+                <li style="text-align:center;padding:2em;color:#999;list-style:none;">
+                    <i class="fas fa-spinner fa-pulse"></i> 回答问题中...
+                </li>
+            </ul>
             
             <div class="ai-hint">
                 没找到问题？<a href="/tools/ai">点我去询问AI</a>
