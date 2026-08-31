@@ -90,5 +90,12 @@ const problems = [
         tags: ['互通服', '指令'],
         summary: '列出互通服常用指令清单，包括跨平台私聊、玩家传送、数据查询等管理指令。',
         file: '/Configs/faq/md/013.md'
+    },
+    {
+        id: '014',
+        title: '如何获取并查看行为日志？',
+        tags: ['日志', '排查'],
+        summary: '在QQ群发送 /getlog 获取指定日期的 .csv 日志文件，并可用 Excel/WPS 或在线日志查看页面快速筛选和取证。',
+        file: '/Configs/faq/md/014.md'
     }
 ];
