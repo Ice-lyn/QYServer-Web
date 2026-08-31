@@ -9,8 +9,7 @@
     <link rel="alternate" type="application/json" href="/Configs/images.json" title="图廊元数据" />
     <link rel="stylesheet" href="/lib/all.css">
     <script src="/lib/AllComponents.js"></script>
-    <link rel="icon" href="/favicon.ico"
-        type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <style>
         body {
             margin: 0;
@@ -53,12 +52,18 @@
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
         }
 
+        /* 图片容器：统一16:10比例 */
         div.img {
+            aspect-ratio: 16 / 10;
             overflow: hidden;
-            background: transparent;
+            background: rgba(0, 0, 0, 0.25);
+            /* 留白处背景 */
             border-radius: 8px;
             transition: all 0.3s ease;
             position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         div.img:hover {
@@ -66,17 +71,29 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
+        div.img a {
+            display: block;
+            width: 100%;
+            height: 100%;
+            text-decoration: none;
+        }
+
         div.img img {
             width: 100%;
-            height: auto;
+            height: 100%;
+            object-fit: contain;
+            /* 完整显示不裁剪 */
             display: block;
             border-radius: 8px;
         }
 
+        /* 标题移至图片下方，不遮挡 */
         div.desc {
-            padding: 15px;
+            padding: 12px 5px 5px;
             text-align: center;
             color: #fff;
+            font-size: 0.95rem;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
         }
 
         .image-grid {
@@ -135,7 +152,7 @@
             </div>
         </div>
     </div>
-    
+
     <script src="/lib/all.js"></script>
     <script>
         const placeholder = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
@@ -155,14 +172,14 @@
         function createImageCard(img) {
             const div = document.createElement('div');
             div.className = 'responsive';
+            // 结构：图片区域与标题分离
             div.innerHTML =
                 '<div class="img">' +
-                    '<a href="' + buildUrl(img) + '">' +
-                        '<img class="lazy" src="' + placeholder + '" data-src="' + img.thumbnailUrl + '" alt="' + img.title + '" width="600" height="400">' +
-                    '</a>' +
-                    '<div class="desc">' + img.title + '</div>' +
+                '<a href="' + buildUrl(img) + '">' +
+                '<img class="lazy" src="' + placeholder + '" data-src="' + img.thumbnailUrl + '" alt="' + img.title + '" width="600" height="400">' +
+                '</a>' +
                 '</div>' +
-            '</div>';
+                '<div class="desc">' + img.title + '</div>';
             return div;
         }
 
@@ -226,24 +243,24 @@
         }
 
         document.addEventListener("DOMContentLoaded", function () {
-                fetch('/Configs/images.json')
-                    .then(response => {
-                        if (!response.ok) throw new Error('Network response was not ok');
-                        return response.json();
-                    })
-                    .then(images => {
-                        const grid = document.getElementById('imageGrid');
-                        grid.innerHTML = ''; // 清空加载提示
-                        images.forEach(function (img) {
-                            grid.appendChild(createImageCard(img));
-                        });
-                        initLazyLoad();
-                    })
-                    .catch(error => {
-                        console.error('Failed to load gallery images:', error);
-                        document.getElementById('imageGrid').innerHTML = '<p style="color:#fff;text-align:center;width:100%;">加载失败</p>';
+            fetch('/Configs/images.json')
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+                .then(images => {
+                    const grid = document.getElementById('imageGrid');
+                    grid.innerHTML = ''; // 清空加载提示
+                    images.forEach(function (img) {
+                        grid.appendChild(createImageCard(img));
                     });
-            });
+                    initLazyLoad();
+                })
+                .catch(error => {
+                    console.error('Failed to load gallery images:', error);
+                    document.getElementById('imageGrid').innerHTML = '<p style="color:#fff;text-align:center;width:100%;">加载失败</p>';
+                });
+        });
     </script>
 </body>
 
