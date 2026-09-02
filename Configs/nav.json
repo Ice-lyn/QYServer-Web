@@ -107,6 +107,24 @@
                     "url": "https://chat.qyserver.cc"
                 }
             ]
+        },
+        {
+            "name": "调查问卷",
+            "subtitle": "帮助我们改进服务器体验",
+            "items": [
+                {
+                    "title": "玩家意见调查",
+                    "icon": "fa-poll",
+                    "description": "参与问卷，反馈您的建议与意见",
+                    "url": "https://wjdc.qyserver.top/s/vN9KKR"
+                },
+                {
+                    "title": "Bug反馈",
+                    "icon": "fa-bug",
+                    "description": "提交游戏中遇到的问题与错误",
+                    "url": "https://wjdc.qyserver.top/s/cIr13A"
+                }
+            ]
         }
     ]
 }
