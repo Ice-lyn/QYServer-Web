@@ -27,6 +27,12 @@
                     "icon": "fa-history",
                     "description": "每次服务器更新的详细内容与实现",
                     "url": "/updatelog/"
+                },
+                {
+                    "title": "CSV 日志",
+                    "icon": "fa-file-csv",
+                    "description": "查看与导出服务器日志数据",
+                    "url": "/tools/csvlog.html"
                 }
             ]
         },
@@ -63,24 +69,12 @@
                     "icon": "fa-images",
                     "description": "建筑与活动精彩截图展示",
                     "url": "/gallery/"
-                }
-            ]
-        },
-        {
-            "name": "实用工具",
-            "subtitle": "管理与调试相关的辅助页面",
-            "items": [
+                },
                 {
                     "title": "AI 助手",
                     "icon": "fa-robot",
                     "description": "基于 AI 的对话与辅助工具",
                     "url": "/tools/ai/"
-                },
-                {
-                    "title": "CSV 日志",
-                    "icon": "fa-file-csv",
-                    "description": "查看与导出服务器日志数据",
-                    "url": "/tools/csvlog.html"
                 }
             ]
         }
