@@ -77,6 +77,36 @@
                     "url": "/tools/ai/"
                 }
             ]
+        },
+        {
+            "name": "其他网页",
+            "subtitle": "QY旗下的其他相关网站",
+            "items": [
+                {
+                    "title": "QY论坛",
+                    "icon": "fa-users",
+                    "description": "社区论坛与交流平台",
+                    "url": "https://space.qyserver.top/"
+                },
+                {
+                    "title": "QY服务状态",
+                    "icon": "fa-heartbeat",
+                    "description": "QY所有服务的运行状态监控",
+                    "url": "https://uptime.qyserver.top/"
+                },
+                {
+                    "title": "GitHub 下载加速",
+                    "icon": "fa-github",
+                    "description": "加速国内GitHub文件下载速度",
+                    "url": "https://github.qyserver.top"
+                },
+                {
+                    "title": "网页聊天室",
+                    "icon": "fa-comments",
+                    "description": "在线与他人聊天",
+                    "url": "https://chat.qyserver.cc"
+                }
+            ]
         }
     ]
 }
